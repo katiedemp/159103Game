@@ -1,5 +1,3 @@
-package gameClasses;
-
 import java.awt.*;
 import java.awt.geom.*;
 

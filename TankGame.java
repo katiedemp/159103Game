@@ -1,5 +1,3 @@
-package gameClasses;
-import gameClasses.*;
 import java.awt.*;
 import java.awt.geom.*;
 import javax.swing.*;
@@ -16,21 +14,20 @@ public class TankGame extends GameEngine {
 	// Image of the player
 	Image playerTankImage;
 	Image playerTurretImage;
-	Player playerOne;
+	Tank playerOne;
 	// Init player Function
 	public void initPlayerTank() {
 		// Load the player Tank sprite
 		playerTankImage   = subImage(playerSpritesheet,96, 0, 96, 207);
 		playerTurretImage = subImage(playerSpritesheet, 0, 0, 96, 207);
-    playerOne = new Player(width()/2,height()/2);
+    	playerOne = new Tank(width()/2, height()/2, 100, 75, 125);
 	}
 	// Draw the tank body
-	public void drawPlayerTank(Player object) {
+	public void drawTank(Tank playerOne) {
 		// Save the current transform
 		saveCurrentTransform();
-
-		translate(object.getPlayerPositionX(), object.getPlayerPositionY());
-		rotate(object.getPlayerAngle());
+		translate(playerOne.getPositionX(), playerOne.getPositionY());
+		rotate(playerOne.getHullAngle());
 
 		// Draw the tank
 		drawImage(playerTankImage, -48, -103.5);
@@ -38,48 +35,32 @@ public class TankGame extends GameEngine {
 		restoreLastTransform();
 	}
 	// Draw the tank turret
-	public void drawPlayerTurret(Player object) {
+	public void drawTurret(Tank playerOne) {
 		saveCurrentTransform();
-		translate(object.getPlayerPositionX(), object.getPlayerPositionY());
-		rotate(object.getPlayerTurretAngle());
+		translate(playerOne.getPositionX(), playerOne.getPositionY());
+		rotate(playerOne.getTurretAngle());
 		//rotate(playerTurretAngle+90);
 		drawImage(playerTurretImage, -48, -103.5);
 		restoreLastTransform();
 	}
 	// Update the tank body
-	public void updatePlayerTank(double dt, Player object) {
+	public void updateTank(double dt, Tank playerOne) {
 		if(forward == true) {
-			// Increase the velocity of the player
-			// as determined by the angle
-			object.setPlayerVelocityX(object.getPlayerVelocityX() + sin(object.getPlayerAngle()) * 200 * dt);
-			object.setPlayerVelocityY(object.getPlayerVelocityY() - cos(object.getPlayerAngle()) * 200 * dt);
+			playerOne.moveForward(dt);		
 		}
-		if (forward == false) {
-			object.setPlayerVelocityX(0);
-			object.setPlayerVelocityY(0);
+		if (reverse == true) {
+			playerOne.moveBackward(dt);
 		}
 
 		// If the user is holding down the left arrow key
 		if(left == true) {
-			// Make the player rotate anti-clockwise
-			object.setPlayerAngle(object.getPlayerAngle() - 100 * dt);
-			if(object.getPlayerAngle() < -360) {
-				object.setPlayerAngle(0);
-			}
+			playerOne.turnLeft(dt);
 		}
 
 		// If the user is holding down the right arrow key
 		if(right == true) {
-			// Make the player rotate clockwise
-      object.setPlayerAngle(object.getPlayerAngle() + 100 * dt);
-			if(object.getPlayerAngle() > 360) {
-				object.setPlayerAngle(0);
-			}
+			playerOne.turnRight(dt);
 		}
-
-		// Make the player move forward
-		object.setPlayerPositionX(object.getPlayerPositionX() + object.getPlayerVelocityX() * dt);
-    object.setPlayerPositionY(object.getPlayerPositionY() + object.getPlayerVelocityY() * dt);
 
 		// If the player reaches the right edge of the screen
 		// 'Warp' it back to the left edge
@@ -98,8 +79,8 @@ public class TankGame extends GameEngine {
 		// if(playerPositionY < 0)        {playerPositionY += height();}
 	}
 	// Update the tank turret
-	public void updatePlayerTurret(double dt, Player object) {
-		double targetAngle = workOutAngle(object.getPlayerPositionX(), object.getPlayerPositionY(), mouseX, mouseY);
+	public void updateTurret(double dt, Tank playerOne) {
+		double targetAngle = workOutAngle(playerOne.getPositionX(), playerOne.getPositionY(), mouseX, mouseY);
 
 		//This is to have the turret track to the cursor slowly, not perfect
 		/* if (playerTurretAngle > targetAngle) {
@@ -110,7 +91,7 @@ public class TankGame extends GameEngine {
 		} */
 
 		//This makes the turret track exactly to the cursor
-		object.setPlayerTurretAngle(targetAngle + 90);
+		playerOne.setTurretAngle(targetAngle + 90);
 	}
 	//-------------------------------------------------------
 	// Game
@@ -124,11 +105,10 @@ public class TankGame extends GameEngine {
 	//Game Over screen
 	Image gameOverImage;
 	// Keep track of keys
-	boolean left, right, forward, down;
+	boolean left, right, forward, reverse;
 	boolean gameOver, menuState, gamePause;
 	boolean player1, player2;
 
-	int maxLasers;
 	int mouseX;
 	int mouseY;
 
@@ -148,17 +128,16 @@ public class TankGame extends GameEngine {
 		AudioClip menuMusic = loadAudio("Music\\MenuMusic.wav");
 		startAudioLoop(menuMusic);
 
-		// Setup booleans
-		left  = false;
-		right = false;
-		forward = false;
-		down  = false;
+		// Setup Game booleans
 		gameOver = true;
 		menuState = true;
-		maxLasers = 5;
 		mouseX = 0;
 		mouseY = 0;
 		player1 = false;
+		left = false;
+		right = false;
+		forward = false;
+		reverse = false;
 
 		// Initialise player
 		initPlayerTank();
@@ -171,8 +150,8 @@ public class TankGame extends GameEngine {
 			return;
 		}
 		// Update the player
-		updatePlayerTank(dt,playerOne);
-		updatePlayerTurret(dt,playerOne);
+		updateTank(dt,playerOne);
+		updateTurret(dt,playerOne);
 	}
 	// This gets called any time the Operating System
 	// tells the program to paint itself
@@ -196,8 +175,8 @@ public class TankGame extends GameEngine {
 				// Draw the player
 				//If only 1 player
 				if (player1 == true) {
-					drawPlayerTank(playerOne);
-					drawPlayerTurret(playerOne);
+					drawTank(playerOne);
+					drawTurret(playerOne);
 
 				//If 2 player
 				} else if (player2 == true) {
@@ -231,17 +210,19 @@ public class TankGame extends GameEngine {
 	public void keyPressed(KeyEvent e) {
 		//The user pressed A
 		if(e.getKeyCode() == KeyEvent.VK_A) {
-
 			left = true;
 		}
 		// The user pressed D
 		if(e.getKeyCode() == KeyEvent.VK_D) {
-
 			right = true;
 		}
 		// The user pressed W
 		if(e.getKeyCode() == KeyEvent.VK_W) {
 			forward = true;
+		}
+		// The user pressed S
+		if(e.getKeyCode() == KeyEvent.VK_S) {
+			reverse = true;
 		}
 		// The user pressed space bar
 		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
@@ -292,9 +273,13 @@ public class TankGame extends GameEngine {
 		if(e.getKeyCode() == KeyEvent.VK_D) {
 			right = false;
 		}
-		// The user released up arrow
+		// The user released W
 		if(e.getKeyCode() == KeyEvent.VK_W) {
 			forward = false;
+		}
+		// The user released S
+		if(e.getKeyCode() == KeyEvent.VK_S) {
+			reverse = false;
 		}
 
 		// Clear the background to black
@@ -304,8 +289,8 @@ public class TankGame extends GameEngine {
 		// If the game is not over yet
 		if(gameOver == false) {
 			// Draw the player
-			drawPlayerTank(playerOne);
-			drawPlayerTurret(playerOne);
+			drawTank(playerOne);
+			drawTurret(playerOne);
 		} else {
 			// If the game is over
 			// Display GameOver text
