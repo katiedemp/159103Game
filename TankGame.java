@@ -149,7 +149,7 @@ public class TankGame extends GameEngine {
 	//-------------------------------------------------------
 	// Game
 	//-------------------------------------------------------
-
+	
 	// Spritesheet
 	Image playerSpritesheet;
 
