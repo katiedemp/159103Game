@@ -116,7 +116,7 @@ public class TankGame extends GameEngine {
 	public void init() {
 		setWindowSize(1024, 1024);
 		// Load sprites
-		playerSpritesheet = loadImage("Tanks\\E-100_strip2.png");
+		playerSpritesheet = loadImage("Tanks\\E100.png");
 		//Load Menu Image
 		menuImage = loadImage("Menu\\TankGame.png");
 		//Load Paused Image
