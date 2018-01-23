@@ -11,6 +11,7 @@ public class TankGame extends GameEngine {
 		createGame(new TankGame());
 	}
 
+
 	//-------------------------------------------------------
 	// Tank Objects
 	//-------------------------------------------------------
@@ -22,7 +23,7 @@ public class TankGame extends GameEngine {
 	// Player position
 	double playerPositionX;
 	double playerPositionY;
-	
+
 	// Player velocity
 	double playerVelocityX;
 	double playerVelocityY;
@@ -152,9 +153,18 @@ public class TankGame extends GameEngine {
 	// Spritesheet
 	Image playerSpritesheet;
 
+	//Menu Screen
+	Image menuImage;
+	//Paused Screen
+	Image pausedImage;
+	//Game Over screen
+	Image gameOverImage;
+
+
 	// Keep track of keys
 	boolean left, right, forward, down;
-	boolean gameOver;
+	boolean gameOver, menuState, gamePause;
+	boolean player1, player2;
 
 	int maxLasers;
 
@@ -166,19 +176,34 @@ public class TankGame extends GameEngine {
 		setWindowSize(1024, 1024);
 		// Load sprites
 		playerSpritesheet = loadImage("Tanks\\E-100_strip2.png");
-		
+
+		//Load Menu Image
+		menuImage = loadImage("Menu\\TankGame.png");
+		//Load Paused Image
+		pausedImage = loadImage("Paused\\PausedImage.png");
+		//Load Game Over Image
+		gameOverImage = loadImage("GameOver\\GameOverImage.png");
+
+		//Load and play Menu Music
+		AudioClip menuMusic = loadAudio("Music\\MenuMusic.wav");
+		startAudioLoop(menuMusic);
+
 		// Setup booleans
 		left  = false;
 		right = false;
 		forward    = false;
 		down  = false;
 
-		gameOver = false;
+		gameOver = true;
+		menuState = true;
 
 		maxLasers = 5;
 
 		mouseX = 0;
 		mouseY = 0;
+
+		player1 = false;
+		player2 = false;
 
 		// Initialise player
 		initPlayerTank();
@@ -186,17 +211,27 @@ public class TankGame extends GameEngine {
 
 	// Updates the display
 	public void update(double dt) {
+
 		// If the game is over
 		if(gameOver == true) {
 			// Don't try to update anything.
 			return;
 		}
 
-		// Update the player
-		updatePlayerTank(dt);		
+		//If not gameOver and not the beginning of the game/menu
+		if (gameOver == false && menuState == false) {
+			// Update the player
 
-		updatePlayerTurret(dt);
+			//If one player
+			if (player1 == true) {
+				updatePlayerTank(dt);
+				updatePlayerTurret(dt);
 
+			//If 2 player
+			} else if (player2 == true) {
+				//Insert code for 2 player
+			}
+		}
 	}
 
 	// This gets called any time the Operating System
@@ -208,20 +243,55 @@ public class TankGame extends GameEngine {
 
 		// If the game is not over yet
 		if(gameOver == false) {
-			// Draw the player
-			drawPlayerTank();
-			drawPlayerTurret();	
-		} else {
-			// If the game is over
-			// Display GameOver text
+			//Display pause info in game
+			changeColor(105,105,105);
+			drawBoldText(width()-195, height()-998, "Press Esc to Pause Game", "Arial", 15);
 			changeColor(white);
-			drawText(width()/2-165, height()/2, "GAME OVER!", "Arial", 50);
+
+			//Paused Game
+			if (gamePause == true) {
+				//Insert Paused screen
+				drawImage(pausedImage, width()-1024, height()-1024);
+
+			} else if (gamePause == false) {
+				// Draw the player
+				//If only 1 player
+				if (player1 == true) {
+					drawPlayerTank();
+					drawPlayerTurret();
+
+				//If 2 player
+				} else if (player2 == true) {
+					//Insert code for 2 player
+				}
+			}
+		} else if(gameOver == true) {
+			// If the game is at menu
+			if (menuState == true) {
+				//Insert Menu screen
+				drawImage(menuImage, width()-1024, height()-1024);
+
+			//If the game is over
+			} else if (menuState == false) {
+				// Display GameOver text
+				if (player1 == true) {
+					//Display player1 score here
+
+					//Insert Game Over Image
+					drawImage(gameOverImage, width()-1024, height()-1024);
+				} else if (player2 == true) {
+					//Display both player scores
+
+					//Display Game Over Image
+					drawImage(gameOverImage, width()-1024, height()-1024);
+				}
+			}
 		}
 	}
 
 	// Called whenever a key is pressed
 	public void keyPressed(KeyEvent e) {
-		//T he user pressed A
+		//The user pressed A
 		if(e.getKeyCode() == KeyEvent.VK_A) {
 
 			left = true;
@@ -238,6 +308,40 @@ public class TankGame extends GameEngine {
 		// The user pressed space bar
 		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
 
+		}
+		// The user pressed 1
+		if(e.getKeyCode() == KeyEvent.VK_1)  {
+			player1	= true;
+			menuState = false;
+			gameOver = false;
+		}
+		// The user pressed 2
+		if(e.getKeyCode() == KeyEvent.VK_2)  {
+			player2	= true;
+			menuState = false;
+			gameOver = false;
+		}
+		// The user pressed Escape key
+		if(e.getKeyCode() == KeyEvent.VK_ESCAPE)  {
+			gamePause  = true;
+		}
+		// The user pressed Q
+		if(e.getKeyCode() == KeyEvent.VK_Q)  {
+			menuState = false;
+			gameOver = true;
+			gamePause = false;
+		}
+		// The user pressed R
+		if(e.getKeyCode() == KeyEvent.VK_R)  {
+			menuState = false;
+			gameOver = false;
+			gamePause = false;
+		}
+		// The user pressed M
+		if(e.getKeyCode() == KeyEvent.VK_M)  {
+			menuState = true;
+			gameOver = true;
+			gamePause = false;
 		}
 	}
 
@@ -264,7 +368,6 @@ public class TankGame extends GameEngine {
 
 	public double workOutAngle(double originX, double originY, int targetX, int targetY) {
 		double angle = atan2(targetY - originY, targetX - originX);
-
 		/* if (angle < 0) {
 			angle += 360;
 		} */
