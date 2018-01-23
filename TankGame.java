@@ -11,7 +11,6 @@ public class TankGame extends GameEngine {
 		createGame(new TankGame());
 	}
 
-
 	//-------------------------------------------------------
 	// Tank Objects
 	//-------------------------------------------------------
@@ -27,6 +26,7 @@ public class TankGame extends GameEngine {
 	// Player velocity
 	double playerVelocityX;
 	double playerVelocityY;
+	int turnSpeed;
 
 	// player angle
 	double playerAngle;
@@ -46,11 +46,12 @@ public class TankGame extends GameEngine {
 		// Setup variables
 		playerPositionX = width()/2;
 		playerPositionY = height()/2;
-		playerVelocityX = 0;
-		playerVelocityY = 0;
+		playerVelocityX = 100;
+		playerVelocityY = 100;
 		playerAngle	= 0;
 		playerTurretAngle = 90;
 		turretSpeed = 125;
+		turnSpeed = 75;
 
 		turretMovingLeft = false;
 		turretMovingRight = false;
@@ -74,28 +75,25 @@ public class TankGame extends GameEngine {
 		saveCurrentTransform();
 		translate(playerPositionX, playerPositionY);
 		rotate(playerTurretAngle);
-		//rotate(playerTurretAngle+90);
 		drawImage(playerTurretImage, -48, -103.5);
 		restoreLastTransform();
 	}
 
-	// Code to update 'move' the player
+	// Code to move the player
 	public void updatePlayerTank(double dt) {
 		if(forward == true) {
-			// Increase the velocity of the player
-			// as determined by the angle
-			playerVelocityX += sin(playerAngle) * 200 * dt;
-			playerVelocityY -= cos(playerAngle) * 200 * dt;
+			playerPositionX += cos(playerAngle-90) * playerVelocityX * dt;
+			playerPositionY += sin(playerAngle-90) * playerVelocityY * dt;
 		}
-		if (forward == false) {
-			playerVelocityX =0;
-			playerVelocityY =0;
+		if (reverse == true) {
+			playerPositionX -= cos(playerAngle-90) * playerVelocityX * dt;
+			playerPositionY -= sin(playerAngle-90) * playerVelocityY * dt;
 		}
 
 		// If the user is holding down the left arrow key
 		if(left == true) {
 			// Make the player rotate anti-clockwise
-			playerAngle -= 100 * dt;
+			playerAngle -= turnSpeed * dt;
 			if(playerAngle < -360) {
 				playerAngle = 0;
 			}
@@ -104,15 +102,11 @@ public class TankGame extends GameEngine {
 		// If the user is holding down the right arrow key
 		if(right == true) {
 			// Make the player rotate clockwise
-			playerAngle += 100 * dt;
+			playerAngle += turnSpeed * dt;
 			if (playerAngle > 360) {
 				playerAngle = 0;
 			}
 		}
-
-		// Make the player move forward
-		playerPositionX += playerVelocityX * dt;
-		playerPositionY += playerVelocityY * dt;
 
 		// If the player reaches the right edge of the screen
 		// 'Warp' it back to the left edge
@@ -162,7 +156,7 @@ public class TankGame extends GameEngine {
 
 
 	// Keep track of keys
-	boolean left, right, forward, down;
+	boolean left, right, forward, reverse;
 	boolean gameOver, menuState, gamePause;
 	boolean player1, player2;
 
@@ -175,7 +169,7 @@ public class TankGame extends GameEngine {
 	public void init() {
 		setWindowSize(1024, 1024);
 		// Load sprites
-		playerSpritesheet = loadImage("Tanks\\E-100_strip2.png");
+		playerSpritesheet = loadImage("Tanks\\E100.png");
 
 		//Load Menu Image
 		menuImage = loadImage("Menu\\TankGame.png");
@@ -189,10 +183,10 @@ public class TankGame extends GameEngine {
 		startAudioLoop(menuMusic);
 
 		// Setup booleans
-		left  = false;
+		left = false;
 		right = false;
-		forward    = false;
-		down  = false;
+		forward = false;
+		reverse = false;
 
 		gameOver = true;
 		menuState = true;
@@ -305,6 +299,10 @@ public class TankGame extends GameEngine {
 		if(e.getKeyCode() == KeyEvent.VK_W) {
 			forward = true;
 		}
+		// The user pressed S
+		if(e.getKeyCode() == KeyEvent.VK_S) {
+			reverse = true;
+		}
 		// The user pressed space bar
 		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
 
@@ -358,6 +356,10 @@ public class TankGame extends GameEngine {
 		// The user released up arrow
 		if(e.getKeyCode() == KeyEvent.VK_W) {
 			forward = false;
+		}
+		// The user pressed S
+		if(e.getKeyCode() == KeyEvent.VK_S) {
+			reverse = false;
 		}
 	}
 
