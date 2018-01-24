@@ -8,6 +8,15 @@ public class TankGame extends GameEngine {
 		// Warning: Only call createGame in this function
 		createGame(new TankGame());
 	}
+	
+	/* GameState
+	public GameState getGameState() {
+		return state;
+	}
+	public void setGameState(GameState par1State) {
+		this.state = par1State;
+	} */
+	
 	//-------------------------------------------------------
 	// Tank Objects
 	//-------------------------------------------------------
@@ -22,8 +31,8 @@ public class TankGame extends GameEngine {
 		// Load the player Tank sprite
 		playerTankImage   = subImage(playerSpritesheet,96, 0, 96, 207);
 		playerTurretImage = subImage(playerSpritesheet, 0, 0, 96, 207);
-    playerOne = new Tank(width()/2, height()/2, 100, 75, 125);
-		playerTwo = new Tank(width()/2, height()/2, 100, 75, 125);
+		playerOne = new Tank(width()/2, height()/2, 100, 75, 125);
+		playerTwo = new Tank(width()/2-100, height()/2, 100, 75, 125);
 	}
 	// Draw the tank body
 	public void drawTank(Tank playerOne) {
@@ -96,6 +105,8 @@ public class TankGame extends GameEngine {
 		//This makes the turret track exactly to the cursor
 		playerOne.setTurretAngle(targetAngle + 90);
 	}
+	
+
 	//-------------------------------------------------------
 	// Game
 	//-------------------------------------------------------
@@ -111,12 +122,17 @@ public class TankGame extends GameEngine {
 	boolean playerOneLeft, playerOneRight, playerOneForward, playerOneReverse;
 	boolean playerTwoLeft, playerTwoRight, playerTwoForward, playerTwoReverse;
 
-	boolean gameOver, menuState, gamePause;
+	//boolean gameOver, menuState, gamePause;
 	boolean player1, player2;
 
 	int mouseX;
 	int mouseY;
 
+	//GameState
+	
+	private GameState state = GameState.MENU;
+
+	//
 	// Function to initialise the game
 	public void init() {
 		setWindowSize(1024, 1024);
@@ -128,35 +144,45 @@ public class TankGame extends GameEngine {
 		pausedImage = loadImage("Paused\\PausedImage.png");
 		//Load Game Over Image
 		gameOverImage = loadImage("GameOver\\GameOverImage.png");
-
+		
 		//Load and play Menu Music
 		AudioClip menuMusic = loadAudio("Music\\MenuMusic.wav");
 		startAudioLoop(menuMusic);
-
+		
 		// Setup Game booleans
-		gameOver = true;
-		menuState = true;
+		//gameOver = true;
+		//menuState = true;
 		mouseX = 0;
 		mouseY = 0;
 		player1 = false;
-
-
+		player2 = false;
+		
 		// Initialise player
 		initPlayerTank();
+		
 	}
+
+	//
 	// Updates the display
 	public void update(double dt) {
 		// If the game is over
-		if(gameOver == true) {
+		if(state == GameState.GAMEOVER) {
 			// Don't try to update anything.
 			return;
 		}
-		// Update the players
-		updateTank(dt,playerOne);
-		updateTurret(dt,playerOne);
-		updateTank(dt,playerTwo);
-		updateTurret(dt,playerTwo);
+		if (state == GameState.PLAYING) {
+			// Update the players
+			updateTank(dt,playerOne);
+			updateTurret(dt,playerOne);
+			updateTank(dt,playerTwo);
+			updateTurret(dt,playerTwo);
+		}
+		if (state == GameState.MENU) { 
+			initPlayerTank();
+		}
 	}
+	
+	
 	// This gets called any time the Operating System
 	// tells the program to paint itself
 	public void paintComponent() {
@@ -164,56 +190,55 @@ public class TankGame extends GameEngine {
 		changeBackgroundColor(black);
 		clearBackground(width(), height());
 		// If the game is not over yet
-		if(gameOver == false) {
+		if(state == GameState.PLAYING) {
 			//Display pause info in game
 			changeColor(105,105,105);
 			drawBoldText(width()-195, height()-998, "Press Esc to Pause Game", "Arial", 15);
 			changeColor(white);
-
-			//Paused Game
-			if (gamePause == true) {
-				//Insert Paused screen
-				drawImage(pausedImage, width()-1024, height()-1024);
-
-			} else if (gamePause == false) {
-				// Draw the player
-				//If only 1 player
-				if (player1 == true) {
-					drawTank(playerOne);
-					drawTurret(playerOne);
-
-				//If 2 player
-				} else if (player2 == true) {
-					drawTank(playerOne);
-					drawTurret(playerOne);
-					drawTank(playerTwo);
-					drawTurret(playerTwo);
-
-				}
+			
+			// Draw the players
+			//If only 1 player
+			if (player1 == true) {
+				drawTank(playerOne);
+				drawTurret(playerOne);
+				
+			//If 2 player
+			} else if (player2 == true) {
+				drawTank(playerOne);
+				drawTurret(playerOne);
+				drawTank(playerTwo);
+				drawTurret(playerTwo);
 			}
-		} else if(gameOver == true) {
-			// If the game is at menu
-			if (menuState == true) {
-				//Insert Menu screen
-				drawImage(menuImage, width()-1024, height()-1024);
-
+			
+		// If the game is at menu
+		} else if(state == GameState.MENU) {
+			//Insert Menu screen
+			drawImage(menuImage, width()-1024, height()-1024);
+			player1 = false;
+			player2 = false;
+			
 			//If the game is over
-			} else if (menuState == false) {
-				// Display GameOver text
-				if (player1 == true) {
-					//Display player1 score here
-
-					//Insert Game Over Image
-					drawImage(gameOverImage, width()-1024, height()-1024);
-				} else if (player2 == true) {
-					//Display both player scores
-
-					//Display Game Over Image
-					drawImage(gameOverImage, width()-1024, height()-1024);
-				}
+		} else if (state == GameState.GAMEOVER) {
+			// Display GameOver text
+			if (player1 == true) {
+				//Display player1 score here
+				//Display Game Over Image
+				drawImage(gameOverImage, width()-1024, height()-1024);
+			} else if (player2 == true) {
+				//Display both player scores
+				//Display Game Over Image
+				drawImage(gameOverImage, width()-1024, height()-1024);
 			}
+			
+		//If game is paused
+		} else  if (state == GameState.PAUSE) {
+			//Insert Paused screen
+			drawImage(pausedImage, width()-1024, height()-1024);
 		}
 	}
+
+
+
 	// Called whenever a key is pressed
 	public void keyPressed(KeyEvent e) {
 		// Keys to move the tank
@@ -261,41 +286,49 @@ public class TankGame extends GameEngine {
 			// To fire
 		}
 
-		// The user pressed 1
-		if(e.getKeyCode() == KeyEvent.VK_1)  {
-			player1	= true;
-			menuState = false;
-			gameOver = false;
-		}
-		// The user pressed 2
-		if(e.getKeyCode() == KeyEvent.VK_2)  {
-			player2	= true;
-			menuState = false;
-			gameOver = false;
-		}
-		// The user pressed Escape key
+		//GameState Buttons
+		// The user pressed Escape key - PAUSE
 		if(e.getKeyCode() == KeyEvent.VK_ESCAPE)  {
-			gamePause  = true;
+			state = GameState.PAUSE;
 		}
-		// The user pressed Q
-		if(e.getKeyCode() == KeyEvent.VK_Q)  {
-			menuState = false;
-			gameOver = true;
-			gamePause = false;
+
+		//If in Pause GameState
+		if (state == GameState.PAUSE) {
+			// The user pressed Q - QUIT/GAMEOVER
+			if(e.getKeyCode() == KeyEvent.VK_Q)  {
+				state = GameState.GAMEOVER;
+			}
+			// The user pressed R - RESUME
+			if(e.getKeyCode() == KeyEvent.VK_R)  {
+				state = GameState.PLAYING;
+			}
+			// The user pressed M - MENU
+			if(e.getKeyCode() == KeyEvent.VK_M)  {
+				state = GameState.MENU;
+			}
 		}
-		// The user pressed R
-		if(e.getKeyCode() == KeyEvent.VK_R)  {
-			menuState = false;
-			gameOver = false;
-			gamePause = false;
+			
+		//If in Menu GameState
+		if (state == GameState.MENU) {
+			// The user pressed 1 - 1 PLAYER
+			if(e.getKeyCode() == KeyEvent.VK_1)  {
+				player1	= true;
+				state = GameState.PLAYING;
+			// The user pressed 2 - 2 PLAYER
+			} else if(e.getKeyCode() == KeyEvent.VK_2)  {
+				player2	= true;
+				state = GameState.PLAYING;
+			}
 		}
-		// The user pressed M
-		if(e.getKeyCode() == KeyEvent.VK_M)  {
-			menuState = true;
-			gameOver = true;
-			gamePause = false;
+		if (state == GameState.GAMEOVER) {
+			// The user pressed M - MENU
+			if(e.getKeyCode() == KeyEvent.VK_M)  {
+				state = GameState.MENU;
+			}
 		}
 	}
+
+
 	// Called whenever a key is released
 	public void keyReleased(KeyEvent e) {
 		// Go left button released
@@ -346,24 +379,28 @@ public class TankGame extends GameEngine {
 		clearBackground(width(), height());
 
 		// If the game is not over yet
-		if(gameOver == false) {
-			// Draw the player
+		if(state == GameState.PLAYING) {
+			// Draw player 1
 			drawTank(playerOne);
 			drawTurret(playerOne);
 
+			//Draw player 2
 			drawTank(playerTwo);
 			drawTurret(playerTwo);
-		} else {
-			// If the game is over
+
+		// If the game is over
+		} else if (state == GameState.GAMEOVER){
 			// Display GameOver text
 			changeColor(white);
 			drawText(width()/2-165, height()/2, "GAME OVER!", "Arial", 50);
 		}
 	}
+
 	public void mouseMoved(MouseEvent event) {
 		mouseX = event.getX();
 		mouseY = event.getY();
 	}
+
 	public double workOutAngle(double originX, double originY, int targetX, int targetY) {
 		double angle = atan2(targetY - originY, targetX - originX);
 		/* if (angle < 0) {
