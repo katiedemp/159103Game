@@ -2,6 +2,7 @@ public class Tank
 {
   // Keyboard input
   boolean left,right,forward,reverse=false;
+
   // Tank position
   private double positionX;
   private double positionY;
@@ -19,6 +20,7 @@ public class Tank
   private boolean turretMovingRight;
   private double turretSpeed;
   private double turnSpeed;
+
 
   public Tank(double positionX, double positionY, double velocity, double turnSpeed, double turretSpeed){
     this.positionX = positionX;
