@@ -8,7 +8,7 @@ public class TankGame extends GameEngine {
 		// Warning: Only call createGame in this function
 		createGame(new TankGame());
 	}
-
+	
 	/* GameState
 	public GameState getGameState() {
 		return state;
@@ -16,7 +16,7 @@ public class TankGame extends GameEngine {
 	public void setGameState(GameState par1State) {
 		this.state = par1State;
 	} */
-
+	
 	//-------------------------------------------------------
 	// Tank Objects
 	//-------------------------------------------------------
@@ -31,8 +31,8 @@ public class TankGame extends GameEngine {
 		// Load the player Tank sprite
 		playerTankImage   = subImage(playerSpritesheet,96, 0, 96, 207);
 		playerTurretImage = subImage(playerSpritesheet, 0, 0, 96, 207);
-    playerOne = new Tank(width()/2, height()/2, 100, 75, 125);
-		playerTwo = new Tank(width()/2, height()/2, 100, 75, 125);
+		playerOne = new Tank(width()/2, height()/2, 100, 75, 125);
+		playerTwo = new Tank(width()/2-100, height()/2, 100, 75, 125);
 	}
 	// Draw the tank body
 	public void drawTank(Tank playerOne) {
@@ -105,7 +105,7 @@ public class TankGame extends GameEngine {
 		//This makes the turret track exactly to the cursor
 		playerOne.setTurretAngle(targetAngle + 90);
 	}
-
+	
 
 	//-------------------------------------------------------
 	// Game
@@ -129,7 +129,7 @@ public class TankGame extends GameEngine {
 	int mouseY;
 
 	//GameState
-
+	
 	private GameState state = GameState.MENU;
 
 	//
@@ -144,11 +144,11 @@ public class TankGame extends GameEngine {
 		pausedImage = loadImage("Paused\\PausedImage.png");
 		//Load Game Over Image
 		gameOverImage = loadImage("GameOver\\GameOverImage.png");
-
+		
 		//Load and play Menu Music
 		AudioClip menuMusic = loadAudio("Music\\MenuMusic.wav");
 		startAudioLoop(menuMusic);
-
+		
 		// Setup Game booleans
 		//gameOver = true;
 		//menuState = true;
@@ -156,10 +156,10 @@ public class TankGame extends GameEngine {
 		mouseY = 0;
 		player1 = false;
 		player2 = false;
-
+		
 		// Initialise player
 		initPlayerTank();
-
+		
 	}
 
 	//
@@ -177,13 +177,12 @@ public class TankGame extends GameEngine {
 			updateTank(dt,playerTwo);
 			updateTurret(dt,playerTwo);
 		}
-		//If at menu reset tank
-		if (state == GameState.MENU) {
+		if (state == GameState.MENU) { 
 			initPlayerTank();
 		}
 	}
-
-
+	
+	
 	// This gets called any time the Operating System
 	// tells the program to paint itself
 	public void paintComponent() {
@@ -196,13 +195,13 @@ public class TankGame extends GameEngine {
 			changeColor(105,105,105);
 			drawBoldText(width()-195, height()-998, "Press Esc to Pause Game", "Arial", 15);
 			changeColor(white);
-
+			
 			// Draw the players
 			//If only 1 player
 			if (player1 == true) {
 				drawTank(playerOne);
 				drawTurret(playerOne);
-
+				
 			//If 2 player
 			} else if (player2 == true) {
 				drawTank(playerOne);
@@ -210,14 +209,14 @@ public class TankGame extends GameEngine {
 				drawTank(playerTwo);
 				drawTurret(playerTwo);
 			}
-
+			
 		// If the game is at menu
 		} else if(state == GameState.MENU) {
 			//Insert Menu screen
 			drawImage(menuImage, width()-1024, height()-1024);
 			player1 = false;
 			player2 = false;
-
+			
 			//If the game is over
 		} else if (state == GameState.GAMEOVER) {
 			// Display GameOver text
@@ -230,7 +229,7 @@ public class TankGame extends GameEngine {
 				//Display Game Over Image
 				drawImage(gameOverImage, width()-1024, height()-1024);
 			}
-
+			
 		//If game is paused
 		} else  if (state == GameState.PAUSE) {
 			//Insert Paused screen
@@ -308,7 +307,7 @@ public class TankGame extends GameEngine {
 				state = GameState.MENU;
 			}
 		}
-
+			
 		//If in Menu GameState
 		if (state == GameState.MENU) {
 			// The user pressed 1 - 1 PLAYER
