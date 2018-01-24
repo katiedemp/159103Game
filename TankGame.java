@@ -11,16 +11,19 @@ public class TankGame extends GameEngine {
 	//-------------------------------------------------------
 	// Tank Objects
 	//-------------------------------------------------------
-	// Image of the player
+	// Image of the 1st player
 	Image playerTankImage;
 	Image playerTurretImage;
 	Tank playerOne;
+	// Image of the 2nd player1
+	Tank playerTwo;
 	// Init player Function
 	public void initPlayerTank() {
 		// Load the player Tank sprite
 		playerTankImage   = subImage(playerSpritesheet,96, 0, 96, 207);
 		playerTurretImage = subImage(playerSpritesheet, 0, 0, 96, 207);
-    	playerOne = new Tank(width()/2, height()/2, 100, 75, 125);
+    playerOne = new Tank(width()/2, height()/2, 100, 75, 125);
+		playerTwo = new Tank(width()/2, height()/2, 100, 75, 125);
 	}
 	// Draw the tank body
 	public void drawTank(Tank playerOne) {
@@ -45,22 +48,22 @@ public class TankGame extends GameEngine {
 	}
 	// Update the tank body
 	public void updateTank(double dt, Tank playerOne) {
-		if(forward == true) {
-			playerOne.moveForward(dt);		
+		if(playerOne.getForward() == true) {
+			playerOne.moveForward(dt);
 		}
-		if (reverse == true) {
+		if (playerOne.getReverse() == true) {
 			playerOne.moveBackward(dt);
 		}
-
 		// If the user is holding down the left arrow key
-		if(left == true) {
+		if(playerOne.getLeft() == true) {
 			playerOne.turnLeft(dt);
 		}
-
 		// If the user is holding down the right arrow key
-		if(right == true) {
+		if(playerOne.getRight() == true) {
 			playerOne.turnRight(dt);
 		}
+
+
 
 		// If the player reaches the right edge of the screen
 		// 'Warp' it back to the left edge
@@ -105,7 +108,9 @@ public class TankGame extends GameEngine {
 	//Game Over screen
 	Image gameOverImage;
 	// Keep track of keys
-	boolean left, right, forward, reverse;
+	boolean playerOneLeft, playerOneRight, playerOneForward, playerOneReverse;
+	boolean playerTwoLeft, playerTwoRight, playerTwoForward, playerTwoReverse;
+
 	boolean gameOver, menuState, gamePause;
 	boolean player1, player2;
 
@@ -134,10 +139,7 @@ public class TankGame extends GameEngine {
 		mouseX = 0;
 		mouseY = 0;
 		player1 = false;
-		left = false;
-		right = false;
-		forward = false;
-		reverse = false;
+
 
 		// Initialise player
 		initPlayerTank();
@@ -149,9 +151,11 @@ public class TankGame extends GameEngine {
 			// Don't try to update anything.
 			return;
 		}
-		// Update the player
+		// Update the players
 		updateTank(dt,playerOne);
 		updateTurret(dt,playerOne);
+		updateTank(dt,playerTwo);
+		updateTurret(dt,playerTwo);
 	}
 	// This gets called any time the Operating System
 	// tells the program to paint itself
@@ -180,7 +184,11 @@ public class TankGame extends GameEngine {
 
 				//If 2 player
 				} else if (player2 == true) {
-					//Insert code for 2 player
+					drawTank(playerOne);
+					drawTurret(playerOne);
+					drawTank(playerTwo);
+					drawTurret(playerTwo);
+
 				}
 			}
 		} else if(gameOver == true) {
@@ -208,26 +216,51 @@ public class TankGame extends GameEngine {
 	}
 	// Called whenever a key is pressed
 	public void keyPressed(KeyEvent e) {
-		//The user pressed A
+		// Keys to move the tank
+		// First player
+		// Go left
 		if(e.getKeyCode() == KeyEvent.VK_A) {
-			left = true;
+			playerOne.setLeft(true);
 		}
-		// The user pressed D
+		// Go right
 		if(e.getKeyCode() == KeyEvent.VK_D) {
-			right = true;
+			playerOne.setRight(true);
 		}
-		// The user pressed W
+		// Go forwards
 		if(e.getKeyCode() == KeyEvent.VK_W) {
-			forward = true;
+			playerOne.setForward(true);
 		}
-		// The user pressed S
+		// Go backwards
 		if(e.getKeyCode() == KeyEvent.VK_S) {
-			reverse = true;
+			playerOne.setReverse(true);
 		}
-		// The user pressed space bar
+		// The user fired
 		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-
+			// To fire
 		}
+
+		// Second player
+		// Go left
+		if(e.getKeyCode() == KeyEvent.VK_J) {
+			playerTwo.setLeft(true);
+		}
+		// Go right
+		if(e.getKeyCode() == KeyEvent.VK_L) {
+			playerTwo.setRight(true);
+		}
+		// Go forwards
+		if(e.getKeyCode() == KeyEvent.VK_I) {
+			playerTwo.setForward(true);
+		}
+		// Go backwards
+		if(e.getKeyCode() == KeyEvent.VK_K) {
+			playerTwo.setReverse(true);
+		}
+		// The user fired
+		if(e.getKeyCode() == KeyEvent.VK_M) {
+			// To fire
+		}
+
 		// The user pressed 1
 		if(e.getKeyCode() == KeyEvent.VK_1)  {
 			player1	= true;
@@ -265,21 +298,47 @@ public class TankGame extends GameEngine {
 	}
 	// Called whenever a key is released
 	public void keyReleased(KeyEvent e) {
-		// The user released left arrow
+		// Go left button released
 		if(e.getKeyCode() == KeyEvent.VK_A) {
-			left = false;
+			playerOne.setLeft(false);
 		}
-		// The user released right arrow
+		// Go right button released
 		if(e.getKeyCode() == KeyEvent.VK_D) {
-			right = false;
+			playerOne.setRight(false);
 		}
-		// The user released W
+		// Go forwards button released
 		if(e.getKeyCode() == KeyEvent.VK_W) {
-			forward = false;
+			playerOne.setForward(false);
 		}
-		// The user released S
+		// Go backwards button released
 		if(e.getKeyCode() == KeyEvent.VK_S) {
-			reverse = false;
+			playerOne.setReverse(false);
+		}
+		// The user fired button released
+		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+			// To fire
+		}
+
+		// Second player
+		// Go left button released
+		if(e.getKeyCode() == KeyEvent.VK_J) {
+			playerTwo.setLeft(false);
+		}
+		// Go right button released
+		if(e.getKeyCode() == KeyEvent.VK_L) {
+			playerTwo.setRight(false);
+		}
+		// Go forwards button released
+		if(e.getKeyCode() == KeyEvent.VK_I) {
+			playerTwo.setForward(false);
+		}
+		// Go backwards button released
+		if(e.getKeyCode() == KeyEvent.VK_K) {
+			playerTwo.setReverse(false);
+		}
+		// The user fired button released
+		if(e.getKeyCode() == KeyEvent.VK_M) {
+			// To fire
 		}
 
 		// Clear the background to black
@@ -291,6 +350,9 @@ public class TankGame extends GameEngine {
 			// Draw the player
 			drawTank(playerOne);
 			drawTurret(playerOne);
+
+			drawTank(playerTwo);
+			drawTurret(playerTwo);
 		} else {
 			// If the game is over
 			// Display GameOver text
