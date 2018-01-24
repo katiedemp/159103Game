@@ -1,5 +1,7 @@
 public class Tank
 {
+  // Keyboard input
+  boolean left,right,forward,reverse=false;
   // Tank position
   private double positionX;
   private double positionY;
@@ -16,7 +18,7 @@ public class Tank
   private boolean turretMovingLeft;
   private boolean turretMovingRight;
   private double turretSpeed;
-  private double turnSpeed;    
+  private double turnSpeed;
 
   public Tank(double positionX, double positionY, double velocity, double turnSpeed, double turretSpeed){
     this.positionX = positionX;
@@ -118,5 +120,31 @@ public class Tank
   }
   public double getTurnSpeed(){
     return turnSpeed;
+  }
+
+  // Setters and getters of the keyboard input
+  public void setLeft(boolean left){
+    this.left = left;
+  }
+  public boolean getLeft(){
+    return left;
+  }
+  public void setRight(boolean right){
+    this.right = right;
+  }
+  public boolean getRight(){
+    return right;
+  }
+  public void setForward(boolean forward){
+    this.forward = forward;
+  }
+  public boolean getForward(){
+    return forward;
+  }
+  public void setReverse(boolean reverse){
+    this.reverse = reverse;
+  }
+  public boolean getReverse(){
+    return reverse;
   }
 }
