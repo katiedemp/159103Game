@@ -8,7 +8,7 @@ public class TankGame extends GameEngine {
 		// Warning: Only call createGame in this function
 		createGame(new TankGame());
 	}
-	
+
 	/* GameState
 	public GameState getGameState() {
 		return state;
@@ -16,7 +16,7 @@ public class TankGame extends GameEngine {
 	public void setGameState(GameState par1State) {
 		this.state = par1State;
 	} */
-	
+
 	//-------------------------------------------------------
 	// Tank Objects
 	//-------------------------------------------------------
@@ -26,6 +26,7 @@ public class TankGame extends GameEngine {
 	Tank playerOne;
 	// Image of the 2nd player1
 	Tank playerTwo;
+
 	// Init player Function
 	public void initPlayerTank() {
 		// Load the player Tank sprite
@@ -34,6 +35,8 @@ public class TankGame extends GameEngine {
 		playerOne = new Tank(width()/2, height()/2, 100, 75, 125);
 		playerTwo = new Tank(width()/2-100, height()/2, 100, 75, 125);
 	}
+
+	// TODO the parameter name should be change from 'playerOne' to 'object'
 	// Draw the tank body
 	public void drawTank(Tank playerOne) {
 		// Save the current transform
@@ -105,8 +108,109 @@ public class TankGame extends GameEngine {
 		//This makes the turret track exactly to the cursor
 		playerOne.setTurretAngle(targetAngle + 90);
 	}
-	
+	// Draw Bullet
+	// Function to draw the laser
+	public void drawLaser(Tank object) {
+		Bullet bullet = object.getBullet();
+		// Draw the laser
+		// Set the color to yellow
+		changeColor(yellow);
 
+		// Save the current transform
+		saveCurrentTransform();
+
+		translate(bullet.getPositionX(), bullet.getPositionY());
+
+		// Rotate the drawing context around the angle of the asteroid
+		rotate(bullet.getAngle());
+
+		// Draw the actual laser
+		drawCircle(0,-20,2);
+
+		// Restore last transform to undo the rotate and translate transforms
+		restoreLastTransform();
+	}
+	// Update bullet
+	// TODO change the keyword 'laser' to 'bullet'
+	public void updateLaser(double dt, Tank object){
+		Bullet laser = object.getBullet();
+		// Update the laser
+		if(laser.getFire() == true) {
+			// Increase the velocity of the spaceship
+			// as determined by the angle
+			laser.setVelocityX (laser.getVelocityX() + sin(laser.getAngle()) * 250 * dt);
+			laser.setVelocityY (laser.getVelocityY() - cos(laser.getAngle()) * 250 * dt);
+		}
+
+		// If the user is holding down the enter  key
+		// Make the laser shoot multiple times
+		if(object.getLeft() == true) {
+			laser.setAngle(laser.getAngle() - 180 * dt);
+		}
+
+		// If the user is holding down the right arrow key
+		// Make the spaceship rotate clockwise
+		if(object.getRight() == true) {
+			laser.setAngle(laser.getAngle() + 180 * dt);
+		}
+
+		// Make the spaceship move forward
+		laser.setPositionX(laser.getPositionX()+ laser.getVelocityX() * dt);
+		laser.setPositionY(laser.getPositionY()+ laser.getVelocityY() * dt);
+    //
+		// if (laserPositionY>500){
+		// 	laserActive = false;
+    //
+		// }
+		// else if (laserPositionY<0){
+		// 	laserActive = false;
+    //
+		// }
+		// else if (laserPositionX<0){
+		// 	laserActive = false;
+		// }
+		// else if (laserPositionX>500){
+		// 	laserActive = false;
+    //
+		// }
+		// double distanceLaserAndAsteroid = distance(laserPositionX,laserPositionY,asteroidPositionX,asteroidPositionY);
+		// if (distanceLaserAndAsteroid<=30){
+		// 	laserActive = false;
+		// 	updateScore();
+		// 	randomAsteroid();
+		// }
+
+		object.setBullet(laser);
+	}
+	// Used in the turret
+	public double workOutAngle(double originX, double originY, int targetX, int targetY) {
+		double angle = atan2(targetY - originY, targetX - originX);
+		/* if (angle < 0) {
+			angle += 360;
+		} */
+		return angle;
+	}
+	// Fire Laser
+	public void fireLaser(Tank object){
+		System.out.println("fireLaser funcion called");
+
+		// Bullet bullet = new Bullet();
+		// object.setBullet(bullet);
+		Bullet bullet = object.getBullet();
+		while(!bullet.getFire()){
+
+			bullet.setPositionX(object.getPositionX());
+			bullet.setPositionY(object.getPositionY());
+
+			bullet.setVelocityX (sin(object.getTurretAngle())* 250);
+			bullet.setVelocityY (-cos(object.getTurretAngle())* 250);
+
+			bullet.setAngle(object.getTurretAngle());
+
+			// Set it to active
+			bullet.setFire(true);
+			}
+	}
 	//-------------------------------------------------------
 	// Game
 	//-------------------------------------------------------
@@ -129,7 +233,7 @@ public class TankGame extends GameEngine {
 	int mouseY;
 
 	//GameState
-	
+
 	private GameState state = GameState.MENU;
 
 	//
@@ -144,11 +248,11 @@ public class TankGame extends GameEngine {
 		pausedImage = loadImage("Paused\\PausedImage.png");
 		//Load Game Over Image
 		gameOverImage = loadImage("GameOver\\GameOverImage.png");
-		
+
 		//Load and play Menu Music
 		AudioClip menuMusic = loadAudio("Music\\MenuMusic.wav");
 		startAudioLoop(menuMusic);
-		
+
 		// Setup Game booleans
 		//gameOver = true;
 		//menuState = true;
@@ -156,10 +260,10 @@ public class TankGame extends GameEngine {
 		mouseY = 0;
 		player1 = false;
 		player2 = false;
-		
+
 		// Initialise player
 		initPlayerTank();
-		
+
 	}
 
 	//
@@ -176,13 +280,14 @@ public class TankGame extends GameEngine {
 			updateTurret(dt,playerOne);
 			updateTank(dt,playerTwo);
 			updateTurret(dt,playerTwo);
+			updateLaser(dt,playerOne);
+			updateLaser(dt,playerTwo);
+
 		}
-		if (state == GameState.MENU) { 
+		if (state == GameState.MENU) {
 			initPlayerTank();
 		}
 	}
-	
-	
 	// This gets called any time the Operating System
 	// tells the program to paint itself
 	public void paintComponent() {
@@ -195,28 +300,31 @@ public class TankGame extends GameEngine {
 			changeColor(105,105,105);
 			drawBoldText(width()-195, height()-998, "Press Esc to Pause Game", "Arial", 15);
 			changeColor(white);
-			
+
 			// Draw the players
 			//If only 1 player
 			if (player1 == true) {
 				drawTank(playerOne);
 				drawTurret(playerOne);
-				
+				drawLaser(playerOne);
+
 			//If 2 player
 			} else if (player2 == true) {
 				drawTank(playerOne);
 				drawTurret(playerOne);
 				drawTank(playerTwo);
 				drawTurret(playerTwo);
+				drawLaser(playerOne);
+				drawLaser(playerTwo);
 			}
-			
+
 		// If the game is at menu
 		} else if(state == GameState.MENU) {
 			//Insert Menu screen
 			drawImage(menuImage, width()-1024, height()-1024);
 			player1 = false;
 			player2 = false;
-			
+
 			//If the game is over
 		} else if (state == GameState.GAMEOVER) {
 			// Display GameOver text
@@ -229,16 +337,13 @@ public class TankGame extends GameEngine {
 				//Display Game Over Image
 				drawImage(gameOverImage, width()-1024, height()-1024);
 			}
-			
+
 		//If game is paused
 		} else  if (state == GameState.PAUSE) {
 			//Insert Paused screen
 			drawImage(pausedImage, width()-1024, height()-1024);
 		}
 	}
-
-
-
 	// Called whenever a key is pressed
 	public void keyPressed(KeyEvent e) {
 		// Keys to move the tank
@@ -262,6 +367,12 @@ public class TankGame extends GameEngine {
 		// The user fired
 		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
 			// To fire
+			Bullet bullet = playerOne.getBullet();
+			bullet.setFire(true);
+			playerOne.setBullet(bullet);
+			fireLaser(playerOne);
+			System.out.println("Space pressed");
+
 		}
 
 		// Second player
@@ -284,6 +395,10 @@ public class TankGame extends GameEngine {
 		// The user fired
 		if(e.getKeyCode() == KeyEvent.VK_M) {
 			// To fire
+			Bullet bullet = playerTwo.getBullet();
+			bullet.setFire(true);
+			playerTwo.setBullet(bullet);
+			fireLaser(playerTwo);
 		}
 
 		//GameState Buttons
@@ -307,7 +422,7 @@ public class TankGame extends GameEngine {
 				state = GameState.MENU;
 			}
 		}
-			
+
 		//If in Menu GameState
 		if (state == GameState.MENU) {
 			// The user pressed 1 - 1 PLAYER
@@ -327,8 +442,6 @@ public class TankGame extends GameEngine {
 			}
 		}
 	}
-
-
 	// Called whenever a key is released
 	public void keyReleased(KeyEvent e) {
 		// Go left button released
@@ -349,7 +462,12 @@ public class TankGame extends GameEngine {
 		}
 		// The user fired button released
 		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-			// To fire
+			Bullet bullet = playerOne.getBullet();
+			bullet.setFire(false);
+			playerOne.setBullet(bullet);
+			fireLaser(playerOne);
+			System.out.println("Space released");
+
 		}
 
 		// Second player
@@ -372,6 +490,10 @@ public class TankGame extends GameEngine {
 		// The user fired button released
 		if(e.getKeyCode() == KeyEvent.VK_M) {
 			// To fire
+			Bullet bullet = playerTwo.getBullet();
+			bullet.setFire(false);
+			playerTwo.setBullet(bullet);
+			fireLaser(playerTwo);
 		}
 
 		// Clear the background to black
@@ -395,17 +517,11 @@ public class TankGame extends GameEngine {
 			drawText(width()/2-165, height()/2, "GAME OVER!", "Arial", 50);
 		}
 	}
-
+	// Caled when mouse is moved
 	public void mouseMoved(MouseEvent event) {
 		mouseX = event.getX();
 		mouseY = event.getY();
 	}
 
-	public double workOutAngle(double originX, double originY, int targetX, int targetY) {
-		double angle = atan2(targetY - originY, targetX - originX);
-		/* if (angle < 0) {
-			angle += 360;
-		} */
-		return angle;
-	}
+
 }
