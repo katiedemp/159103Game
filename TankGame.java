@@ -192,8 +192,6 @@ public class TankGame extends GameEngine {
 	}
 	// Fire Laser
 	public void fireLaser(Tank object){
-		System.out.println("fireLaser funcion called");
-
 		// Bullet bullet = new Bullet();
 		// object.setBullet(bullet);
 		Bullet bullet = object.getBullet();
@@ -371,8 +369,6 @@ public class TankGame extends GameEngine {
 			bullet.setFire(true);
 			playerOne.setBullet(bullet);
 			fireLaser(playerOne);
-			System.out.println("Space pressed");
-
 		}
 
 		// Second player
@@ -466,8 +462,6 @@ public class TankGame extends GameEngine {
 			bullet.setFire(false);
 			playerOne.setBullet(bullet);
 			fireLaser(playerOne);
-			System.out.println("Space released");
-
 		}
 
 		// Second player
