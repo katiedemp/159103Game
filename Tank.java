@@ -1,5 +1,7 @@
 public class Tank
 {
+  // On game VALUE
+  private int health = 100;
   // Bullet
   private Bullet bullet = new Bullet(0,0,0,0);
   // Keyboard input
@@ -23,8 +25,9 @@ public class Tank
   private double turretSpeed;
   private double turnSpeed;
 
-
-  public Tank(double positionX, double positionY, double velocity, double turnSpeed, double turretSpeed){
+  private int height;
+  private int width;
+  public Tank(double positionX, double positionY, double velocity, double turnSpeed, double turretSpeed,int height, int width){
     this.positionX = positionX;
     this.positionY = positionY;
     this.velocityX = velocity;
@@ -35,6 +38,8 @@ public class Tank
     this.turnSpeed = turnSpeed;
     this.turretMovingLeft = false;
     this.turretMovingRight = false;
+    this.height = height;
+    this.width = width;
   }
 
   public void turnRight(double dt) {
@@ -158,4 +163,24 @@ public class Tank
   public void setBullet(Bullet bullet){
     this.bullet = bullet;
   }
+
+  public int getHeight(){
+    return height;
+  }
+  public void setHeight(int height){
+    this.height = height;
+  }
+  public int getWidth(){
+    return width;
+  }
+  public void setWidth(int width){
+    this.width = width;
+  }
+  public int getHealth(){
+    return health;
+  }
+  public void setHealth(int health){
+    this.health = health;
+  }
+
 }

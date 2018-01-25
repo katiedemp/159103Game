@@ -2,6 +2,12 @@ import java.awt.*;
 import java.awt.geom.*;
 import javax.swing.*;
 import java.awt.event.*;
+
+
+
+// import javafx.scene.shape.*;
+
+
 public class TankGame extends GameEngine {
 	// Main Function
 	public static void main(String args[]) {
@@ -16,7 +22,9 @@ public class TankGame extends GameEngine {
 	public void setGameState(GameState par1State) {
 		this.state = par1State;
 	} */
-
+	// Tank types
+	int tankHeightE100 = 207;
+	int tankWidthE100 = 96;
 	//-------------------------------------------------------
 	// Tank Objects
 	//-------------------------------------------------------
@@ -29,13 +37,12 @@ public class TankGame extends GameEngine {
 	// Init player Function
 	public void initPlayerTank() {
 		// Load the player Tank sprite
-		playerTankImage   = subImage(playerSpritesheet,96, 0, 96, 207);
-		playerTurretImage = subImage(playerSpritesheet, 0, 0, 96, 207);
-		playerOne = new Tank(width()/2, height()/2, 100, 75, 125);
-		playerTwo = new Tank(width()/2-100, height()/2, 100, 75, 125);
+		playerTankImage   = subImage(playerSpritesheet,96, 0, tankWidthE100, tankHeightE100);
+		playerTurretImage = subImage(playerSpritesheet, 0, 0, tankWidthE100, tankHeightE100);
+		playerOne = new Tank(width()/2, height()/2, 100, 75, 125,tankHeightE100,tankWidthE100);
+		playerTwo = new Tank(width()/2-100, height()/2, 100, 75, 125,tankHeightE100,tankWidthE100);
 		// bulletImage = subImage(bulletImageSprite,0,0,16,16);
 	}
-
 	// TODO the parameter name should be change from 'playerOne' to 'object'
 	// Draw the tank body
 	public void drawTank(Tank playerOne) {
@@ -60,6 +67,10 @@ public class TankGame extends GameEngine {
 	}
 	// Update the tank body
 	public void updateTank(double dt, Tank playerOne) {
+		if (playerOne.getHealth()<0){
+			// Make tank explode
+			System.out.println("Tank Exploded");
+		}
 		if(playerOne.getForward() == true) {
 			playerOne.moveForward(dt);
 		}
@@ -124,7 +135,7 @@ public class TankGame extends GameEngine {
 		rotate(bullet.getAngle());
 
 		// Draw the actual laser
-		drawImage(bulletImageSprite,0,0);
+		drawImage(bulletImageSprite,-7,-100);
 		// Restore last transform to undo the rotate and translate transforms
 		restoreLastTransform();
 	}
@@ -133,6 +144,7 @@ public class TankGame extends GameEngine {
 	public void updateLaser(double dt, Tank object){
 		Bullet laser = object.getBullet();
 		// Update the laser
+
 		if(laser.getFire() == true) {
 			// Increase the velocity of the spaceship
 			// as determined by the angle
@@ -142,15 +154,15 @@ public class TankGame extends GameEngine {
 
 		// If the user is holding down the enter  key
 		// Make the laser shoot multiple times
-		if(object.getLeft() == true) {
-			laser.setAngle(laser.getAngle() - 180 * dt);
-		}
+		// if(object.getLeft() == true) {
+		// 	laser.setAngle(laser.getAngle() - 180 * dt);
+		// }
 
 		// If the user is holding down the right arrow key
 		// Make the spaceship rotate clockwise
-		if(object.getRight() == true) {
-			laser.setAngle(laser.getAngle() + 180 * dt);
-		}
+		// if(object.getRight() == true) {
+		// 	laser.setAngle(laser.getAngle() + 180 * dt);
+		// }
 
 		// Make the spaceship move forward
 		laser.setPositionX(laser.getPositionX()+ laser.getVelocityX() * dt);
@@ -206,6 +218,48 @@ public class TankGame extends GameEngine {
 			// Set it to active
 			bullet.setFire(true);
 			}
+	}
+	// Overlap two rectangles
+	public boolean overlaps (Rectangle first,Rectangle second) {
+    return (second.x < first.x + first.width && second.x + second.width > first.x && second.y < first.y + first.height && second.y + second.height > first.y);
+}
+	// Detect collision
+	public Tank detectCollision(){
+		int tankE100Height = playerOne.getHeight();
+		int tankE100Width = playerOne.getWidth();
+
+		Rectangle playerOneHitArea = new Rectangle((int)playerOne.getPositionX(),(int)playerOne.getPositionY(),(int)playerOne.getWidth(),(int)playerOne.getHeight());
+
+		Bullet playerOneBullet = playerOne.getBullet();
+		// Circle playerOneBulletHitArea = new Circle ((int)playerOneBullet.getPositionX(),(int)playerOneBullet.getPositionY(),playerOneBullet.getRadius());
+		Rectangle playerOneBulletHitArea = new Rectangle((int)playerOneBullet.getPositionX(),(int)playerOneBullet.getPositionY(),playerOneBullet.getRadius(),playerOneBullet.getRadius());
+
+		Rectangle playerTwoHitArea = new Rectangle((int) playerTwo.getPositionX(),(int)playerTwo.getPositionY(),playerTwo.getWidth(),tankE100Height);
+		Bullet playerTwoBullet = playerTwo.getBullet();
+		Rectangle playerTwoBulletHitArea = new Rectangle((int)playerTwoBullet.getPositionX(),(int)playerTwoBullet.getPositionY(),playerTwoBullet.getRadius(),playerTwoBullet.getRadius());
+
+    // Assuming there is an intersect method, otherwise just handcompare the values
+    if (overlaps(playerOneHitArea,playerTwoBulletHitArea))
+    {
+			System.out.println("Player One was hit by the second player bullet.");
+			playerOne.setHealth(playerOne.getHealth()-10);
+			return playerTwo;
+       // A Collision!
+    }
+		if (overlaps(playerTwoHitArea,playerOneBulletHitArea))
+		{
+			System.out.println("Player Two was hit by the second player bullet.");
+			playerTwo.setHealth(playerTwo.getHealth()-10);
+			return playerOne;
+		}
+		else{
+			return null;
+		}
+		// if (playerOneHitArea.Intersects(playerTwoHitArea))
+		// {
+		// 	System.out.println("Player One was hit.");
+		// 	 // A Collision!
+		// }
 	}
 	//-------------------------------------------------------
 	// Game
@@ -282,7 +336,15 @@ public class TankGame extends GameEngine {
 			updateTurret(dt,playerTwo);
 			updateLaser(dt,playerOne);
 			updateLaser(dt,playerTwo);
-
+			Tank tankCollision = detectCollision();
+			if (tankCollision!= null){
+				System.out.println("Stop bullet");
+				Bullet bulletToStop = tankCollision.getBullet();
+				bulletToStop.setPositionX(0);
+				bulletToStop.setPositionY(0);
+				bulletToStop.setVelocityX(0);
+				bulletToStop.setVelocityY(0);
+			}
 		}
 		if (state == GameState.MENU) {
 			initPlayerTank();
@@ -305,19 +367,19 @@ public class TankGame extends GameEngine {
 			//If only 1 player
 			if (player1 == true) {
 				drawLaser(playerOne);
-
 				drawTank(playerOne);
 				drawTurret(playerOne);
 
 			//If 2 player
 			} else if (player2 == true) {
+				drawLaser(playerOne);
 				drawLaser(playerTwo);
-
 				drawTank(playerOne);
 				drawTurret(playerOne);
 				drawTank(playerTwo);
 				drawTurret(playerTwo);
-				drawLaser(playerOne);
+
+
 			}
 
 		// If the game is at menu
