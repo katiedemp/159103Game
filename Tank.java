@@ -1,7 +1,9 @@
 public class Tank
 {
+  // Bullet
+  private Bullet bullet = new Bullet(0,0,0,0);
   // Keyboard input
-  boolean left,right,forward,reverse=false;
+  private boolean left,right,forward,reverse=false;
 
   // Tank position
   private double positionX;
@@ -148,5 +150,12 @@ public class Tank
   }
   public boolean getReverse(){
     return reverse;
+  }
+
+  public Bullet getBullet(){
+    return bullet;
+  }
+  public void setBullet(Bullet bullet){
+    this.bullet = bullet;
   }
 }
