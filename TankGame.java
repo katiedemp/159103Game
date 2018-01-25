@@ -26,7 +26,6 @@ public class TankGame extends GameEngine {
 	Tank playerOne;
 	// Image of the 2nd player1
 	Tank playerTwo;
-
 	// Init player Function
 	public void initPlayerTank() {
 		// Load the player Tank sprite
@@ -34,6 +33,7 @@ public class TankGame extends GameEngine {
 		playerTurretImage = subImage(playerSpritesheet, 0, 0, 96, 207);
 		playerOne = new Tank(width()/2, height()/2, 100, 75, 125);
 		playerTwo = new Tank(width()/2-100, height()/2, 100, 75, 125);
+		// bulletImage = subImage(bulletImageSprite,0,0,16,16);
 	}
 
 	// TODO the parameter name should be change from 'playerOne' to 'object'
@@ -114,19 +114,17 @@ public class TankGame extends GameEngine {
 		Bullet bullet = object.getBullet();
 		// Draw the laser
 		// Set the color to yellow
-		changeColor(yellow);
 
 		// Save the current transform
 		saveCurrentTransform();
 
-		translate(bullet.getPositionX(), bullet.getPositionY());
+		translate(bullet.getPositionX()-8, bullet.getPositionY());
 
 		// Rotate the drawing context around the angle of the asteroid
 		rotate(bullet.getAngle());
 
 		// Draw the actual laser
-		drawCircle(0,-20,2);
-
+		drawImage(bulletImageSprite,0,0);
 		// Restore last transform to undo the rotate and translate transforms
 		restoreLastTransform();
 	}
@@ -220,6 +218,8 @@ public class TankGame extends GameEngine {
 	Image pausedImage;
 	//Game Over screen
 	Image gameOverImage;
+	// Bullets
+	Image bulletImageSprite;
 	// Keep track of keys
 	boolean playerOneLeft, playerOneRight, playerOneForward, playerOneReverse;
 	boolean playerTwoLeft, playerTwoRight, playerTwoForward, playerTwoReverse;
@@ -246,7 +246,9 @@ public class TankGame extends GameEngine {
 		pausedImage = loadImage("Paused\\PausedImage.png");
 		//Load Game Over Image
 		gameOverImage = loadImage("GameOver\\GameOverImage.png");
+		// Load bullet Image
 
+		bulletImageSprite = loadImage("Bullets\\bullet.png");
 		//Load and play Menu Music
 		AudioClip menuMusic = loadAudio("Music\\MenuMusic.wav");
 		startAudioLoop(menuMusic);
@@ -302,18 +304,20 @@ public class TankGame extends GameEngine {
 			// Draw the players
 			//If only 1 player
 			if (player1 == true) {
+				drawLaser(playerOne);
+
 				drawTank(playerOne);
 				drawTurret(playerOne);
-				drawLaser(playerOne);
 
 			//If 2 player
 			} else if (player2 == true) {
+				drawLaser(playerTwo);
+
 				drawTank(playerOne);
 				drawTurret(playerOne);
 				drawTank(playerTwo);
 				drawTurret(playerTwo);
 				drawLaser(playerOne);
-				drawLaser(playerTwo);
 			}
 
 		// If the game is at menu
