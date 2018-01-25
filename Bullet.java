@@ -13,7 +13,7 @@ public class Bullet
   private double velocityX = 0;
   private double velocityY = 0;
 
-
+  private int radius = 16;
   public Bullet(double positionX, double positionY,double velocityX , double velocityY){
     this.positionX = positionX;
     this.positionY = positionY;
@@ -58,5 +58,11 @@ public class Bullet
   }
   public boolean getFire(){
     return fire;
+  }
+  public void setRadius(int radius){
+    this.radius = radius;
+  }
+  public int getRadius(){
+    return radius;
   }
 }
