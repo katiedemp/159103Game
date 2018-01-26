@@ -20,7 +20,7 @@ public class hud extends GameEngine {
 	boolean gameOver;
 	
 	//Game variables
-	int health;
+	int Health = 100;
 	
 	// Function to initialise the game
 	public void init() {
@@ -29,11 +29,7 @@ public class hud extends GameEngine {
 	
 	// Updates the display
 	public void update(double dt) {
-		// If the game is over
-		if(gameOver == true) {
-			// Don't try to update anything.
-			return;
-		}
+		Health--;
 	}
 	
 	//----
@@ -53,16 +49,13 @@ public class hud extends GameEngine {
 	//----
 	// Health
 	//----
-	
-	int Health = 100;
 	public void updateHealth(){
-		Health-=1;
 	}
 	
 	public void drawHealthBar(int Health){
 		changeColor(black);
 		drawText(20, 20, "Health:", "Arial", 20);
-		drawText(80, 20, Integer.toString(Health), "Arial", 20);
+		drawSolidRectangle(90, 0, (60*Health)/100, 25);
 	}
 	
 	
@@ -95,16 +88,7 @@ public class hud extends GameEngine {
 		
 		// Paint the score board
 		drawScoreBoard(Score);
+
 		
-	}
-
-	public void paintHUD() {
-		changeColor(red);
-
-		if(width() == 500) {
-			drawSolidRectangle(431, 488 - (57*health)/100, 57, (57*health)/100);
-		} else if(width() == 750) {
-			drawSolidRectangle(646, 732 - (85*health)/100, 85, (85*health)/100);
-		}
 	}
 }
