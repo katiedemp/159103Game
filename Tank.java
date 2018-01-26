@@ -2,6 +2,9 @@ public class Tank
 {
   // On game VALUE
   private int health = 100;
+  // Tanks
+  private boolean moving = false;
+  private boolean shooting = false;
   // Bullet
   private Bullet bullet = new Bullet(0,0,0,0);
   // Keyboard input
@@ -182,5 +185,16 @@ public class Tank
   public void setHealth(int health){
     this.health = health;
   }
-
+  public boolean getMovement(){
+    return moving;
+  }
+  public void setMovement(boolean moving){
+    this.moving = moving;
+  }
+  public boolean getShooting(){
+    return shooting;
+  }
+  public void setShooting(boolean shooting){
+    this.shooting = shooting;
+  }
 }
