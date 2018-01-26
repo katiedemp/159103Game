@@ -34,6 +34,9 @@ public class TankGame extends GameEngine {
 	Tank playerOne;
 	// Image of the 2nd player1
 	Tank playerTwo;
+	// Tank sound effects
+	AudioClip TankMovingMusic =  loadAudio("Music\\tankDriving.wav");
+;
 	// Init player Function
 	public void initPlayerTank() {
 		// Load the player Tank sprite
@@ -66,43 +69,29 @@ public class TankGame extends GameEngine {
 		restoreLastTransform();
 	}
 	// Update the tank body
-	public void updateTank(double dt, Tank playerOne) {
-		if (playerOne.getHealth()<0){
+	public void updateTank(double dt, Tank object) {
+		if (object.getHealth()<0){
 			// Make tank explode
 			System.out.println("Tank Exploded");
 		}
-		if(playerOne.getForward() == true) {
-			playerOne.moveForward(dt);
+		if(object.getForward() == true) {
+			TankMoveSound(playerOne);
+			object.moveForward(dt);
 		}
-		if (playerOne.getReverse() == true) {
-			playerOne.moveBackward(dt);
+		if (object.getReverse() == true) {
+			TankMoveSound(playerOne);
+			object.moveBackward(dt);
 		}
 		// If the user is holding down the left arrow key
-		if(playerOne.getLeft() == true) {
-			playerOne.turnLeft(dt);
+		if(object.getLeft() == true) {
+			TankMoveSound(playerOne);
+			object.turnLeft(dt);
 		}
 		// If the user is holding down the right arrow key
-		if(playerOne.getRight() == true) {
-			playerOne.turnRight(dt);
+		if(object.getRight() == true) {
+			TankMoveSound(playerOne);
+			object.turnRight(dt);
 		}
-
-
-
-		// If the player reaches the right edge of the screen
-		// 'Warp' it back to the left edge
-		// if(playerPositionX > width())  {playerPositionX -= width();}
-
-		// If the player reaches the left edge of the screen
-		// 'Warp' it back to the right edge
-		// if(playerPositionX < 0)        {playerPositionX += width();}
-
-		// If the player reaches the top edge of the screen
-		// 'Warp' it back to the bottom edge
-		// if(playerPositionY > height()) {playerPositionY -= height();}
-
-		// If the player reaches the bottom edge of the screen
-		// 'Warp' it back to the top edge
-		// if(playerPositionY < 0)        {playerPositionY += height();}
 	}
 	// Update the tank turret
 	public void updateTurret(double dt, Tank playerOne) {
@@ -285,7 +274,23 @@ public class TankGame extends GameEngine {
 	int mouseY;
 
 	//GameState
+	private void TankMoveSound(Tank object){
+		if (object.getMovement() == false){
+			// start audioClip
+			startAudioLoop(TankMovingMusic,5);
+			object.setMovement(true);
+		}
+	}
+	private void TankStopSound(Tank object){
+		if (object.getMovement() == true){
+			// start audioClip
+			object.setMovement(false);
+			stopAudioLoop(TankMovingMusic);
 
+
+
+		}
+	}
 	private GameState state = GameState.MENU;
 
 	//
@@ -305,7 +310,11 @@ public class TankGame extends GameEngine {
 		bulletImageSprite = loadImage("Bullets\\bullet.png");
 		//Load and play Menu Music
 		AudioClip menuMusic = loadAudio("Music\\MenuMusic.wav");
-		startAudioLoop(menuMusic);
+
+		// startAudioLoop(menuMusic,5);
+		// load tank driving Sound
+
+
 
 		// Setup Game booleans
 		//gameOver = true;
@@ -415,18 +424,23 @@ public class TankGame extends GameEngine {
 		// Go left
 		if(e.getKeyCode() == KeyEvent.VK_A) {
 			playerOne.setLeft(true);
+			// TankMoveSound(playerOne);
 		}
 		// Go right
 		if(e.getKeyCode() == KeyEvent.VK_D) {
 			playerOne.setRight(true);
+			// TankMoveSound(playerOne);
 		}
 		// Go forwards
 		if(e.getKeyCode() == KeyEvent.VK_W) {
 			playerOne.setForward(true);
+
 		}
 		// Go backwards
 		if(e.getKeyCode() == KeyEvent.VK_S) {
 			playerOne.setReverse(true);
+			// TankMoveSound(playerOne);
+
 		}
 		// The user fired
 		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
@@ -441,14 +455,19 @@ public class TankGame extends GameEngine {
 		// Go left
 		if(e.getKeyCode() == KeyEvent.VK_J) {
 			playerTwo.setLeft(true);
+			// TankMoveSound(playerTwo);
+
 		}
 		// Go right
 		if(e.getKeyCode() == KeyEvent.VK_L) {
 			playerTwo.setRight(true);
+			// TankMoveSound(playerTwo);
+
 		}
 		// Go forwards
 		if(e.getKeyCode() == KeyEvent.VK_I) {
 			playerTwo.setForward(true);
+			// TankMoveSound(playerTwo);
 		}
 		// Go backwards
 		if(e.getKeyCode() == KeyEvent.VK_K) {
@@ -506,21 +525,42 @@ public class TankGame extends GameEngine {
 	}
 	// Called whenever a key is released
 	public void keyReleased(KeyEvent e) {
+		
+		if (playerOne.getMovement() == true){
+			// start audioClip
+			TankStopSound(playerOne);
+			playerOne.setMovement(false);
+		}
+		if (playerTwo.getMovement() == true){
+			// start audioClip
+			TankStopSound(playerOne);
+			playerTwo.setMovement(false);
+		}
+
+
 		// Go left button released
 		if(e.getKeyCode() == KeyEvent.VK_A) {
 			playerOne.setLeft(false);
+			TankStopSound(playerOne);
+
 		}
 		// Go right button released
 		if(e.getKeyCode() == KeyEvent.VK_D) {
 			playerOne.setRight(false);
+			TankStopSound(playerOne);
+
 		}
 		// Go forwards button released
 		if(e.getKeyCode() == KeyEvent.VK_W) {
 			playerOne.setForward(false);
+			TankStopSound(playerOne);
+
 		}
 		// Go backwards button released
 		if(e.getKeyCode() == KeyEvent.VK_S) {
 			playerOne.setReverse(false);
+			TankStopSound(playerOne);
+
 		}
 		// The user fired button released
 		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
@@ -534,18 +574,26 @@ public class TankGame extends GameEngine {
 		// Go left button released
 		if(e.getKeyCode() == KeyEvent.VK_J) {
 			playerTwo.setLeft(false);
+			TankStopSound(playerTwo);
+
 		}
 		// Go right button released
 		if(e.getKeyCode() == KeyEvent.VK_L) {
 			playerTwo.setRight(false);
+			TankStopSound(playerTwo);
+
 		}
 		// Go forwards button released
 		if(e.getKeyCode() == KeyEvent.VK_I) {
 			playerTwo.setForward(false);
+			TankStopSound(playerTwo);
+
 		}
 		// Go backwards button released
 		if(e.getKeyCode() == KeyEvent.VK_K) {
 			playerTwo.setReverse(false);
+			TankStopSound(playerTwo);
+
 		}
 		// The user fired button released
 		if(e.getKeyCode() == KeyEvent.VK_M) {
