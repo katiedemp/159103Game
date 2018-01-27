@@ -36,6 +36,8 @@ public class TankGame extends GameEngine {
 	Tank playerTwo;
 	// Tank sound effects
 	AudioClip TankMovingMusic =  loadAudio("Music\\tankDriving.wav");
+	AudioClip TankFire =  loadAudio("Music\\fire.wav");
+
 ;
 	// Init player Function
 	public void initPlayerTank() {
@@ -449,6 +451,7 @@ public class TankGame extends GameEngine {
 			bullet.setFire(true);
 			playerOne.setBullet(bullet);
 			fireLaser(playerOne);
+			playAudio(TankFire);
 		}
 
 		// Second player
@@ -525,7 +528,7 @@ public class TankGame extends GameEngine {
 	}
 	// Called whenever a key is released
 	public void keyReleased(KeyEvent e) {
-		
+
 		if (playerOne.getMovement() == true){
 			// start audioClip
 			TankStopSound(playerOne);
