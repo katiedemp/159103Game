@@ -41,6 +41,9 @@ public class Tank
   private double turretSpeed;
   private double turnSpeed;
 
+  private boolean patrolling;
+  private boolean chasing;
+
   private int height;
   private int width;
   public Tank(double positionX, double positionY, double velocity, double turnSpeed, double turretSpeed,int height, int width){

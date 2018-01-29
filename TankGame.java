@@ -44,19 +44,19 @@ public class TankGame extends GameEngine {
 	// Init player Function
 	public void initPlayerTank() {
 		// Load the player Tank sprite
-		playerTankImage   = subImage(playerSpritesheet,96, 0, tankWidthE100, tankHeightE100);
-		playerTurretImage = subImage(playerSpritesheet, 0, 0, tankWidthE100, tankHeightE100);
-		playerOne = new Tank(100,100, 100, 75, 125,tankHeightE100,tankWidthE100);
-		playerTwo = new Tank(0,0, 100, 75, 125,tankHeightE100,tankWidthE100);
+
+		playerTankImage   = subImage(E100SpriteSheet,96, 0, tankWidthE100, tankHeightE100);
+		playerTurretImage = subImage(E100SpriteSheet, 0, 0, tankWidthE100, tankHeightE100);
+		playerOne = new Tank(width()/2, height()/2, 100, 75, 125,tankHeightE100,tankWidthE100);
+		playerTwo = new Tank(width()/2-100, height()/2, 100, 75, 125,tankHeightE100,tankWidthE100);
 		// bulletImage = subImage(bulletImageSprite,0,0,16,16);
 	}
-	// TODO the parameter name should be change from 'playerOne' to 'object'
 	// Draw the tank body
-	public void drawTank(Tank playerOne) {
+	public void drawTank(Tank tank) {
 		// Save the current transform
 		saveCurrentTransform();
-		translate(playerOne.getPositionX(), playerOne.getPositionY());
-		rotate(playerOne.getHullAngle());
+		translate(tank.getPositionX(), tank.getPositionY());
+		rotate(tank.getHullAngle());
 
 		// Draw the tank
 		drawImage(playerTankImage, -48, -103.5);
@@ -64,37 +64,37 @@ public class TankGame extends GameEngine {
 		restoreLastTransform();
 	}
 	// Draw the tank turret
-	public void drawTurret(Tank playerOne) {
+	public void drawTurret(Tank tank) {
 		saveCurrentTransform();
-		translate(playerOne.getPositionX(), playerOne.getPositionY());
-		rotate(playerOne.getTurretAngle());
+		translate(tank.getPositionX(), tank.getPositionY());
+		rotate(tank.getTurretAngle());
 		//rotate(playerTurretAngle+90);
 		drawImage(playerTurretImage, -48, -103.5);
 		restoreLastTransform();
 	}
 	// Update the tank body
-	public void updateTank(double dt, Tank object) {
-		if (object.getHealth()<0){
+	public void updateTank(double dt, Tank tank) {
+		if (tank.getHealth()<0){
 			// Make tank explode
 			System.out.println("Tank Exploded");
 		}
-		if(object.getForward() == true) {
+		if(tank.getForward() == true) {
 			TankMoveSound(playerOne);
-			object.moveForward(dt);
+			tank.moveForward(dt);
 		}
-		if (object.getReverse() == true) {
+		if (tank.getReverse() == true) {
 			TankMoveSound(playerOne);
-			object.moveBackward(dt);
+			tank.moveBackward(dt);
 		}
 		// If the user is holding down the left arrow key
-		if(object.getLeft() == true) {
+		if(tank.getLeft() == true) {
 			TankMoveSound(playerOne);
-			object.turnLeft(dt);
+			tank.turnLeft(dt);
 		}
 		// If the user is holding down the right arrow key
-		if(object.getRight() == true) {
+		if(tank.getRight() == true) {
 			TankMoveSound(playerOne);
-			object.turnRight(dt);
+			tank.turnRight(dt);
 		}
 	}
 	// Update the tank turret
@@ -117,7 +117,6 @@ public class TankGame extends GameEngine {
 	public void drawLaser(Tank object) {
 		Bullet bullet = object.getBullet();
 		// Draw the laser
-		// Set the color to yellow
 
 		// Save the current transform
 		saveCurrentTransform();
@@ -175,18 +174,10 @@ public class TankGame extends GameEngine {
 		// else if (laserPositionX>500){
 		// 	laserActive = false;
     //
-		// }
-		// double distanceLaserAndAsteroid = distance(laserPositionX,laserPositionY,asteroidPositionX,asteroidPositionY);
-		// if (distanceLaserAndAsteroid<=30){
-		// 	laserActive = false;
-		// 	updateScore();
-		// 	randomAsteroid();
-		// }
-
 		object.setBullet(laser);
 	}
 	// Used in the turret
-	public double workOutAngle(double originX, double originY, int targetX, int targetY) {
+	public double workOutAngle(double originX, double originY, double targetX, double targetY) {
 		double angle = atan2(targetY - originY, targetX - originX);
 		/* if (angle < 0) {
 			angle += 360;
@@ -267,11 +258,141 @@ public class TankGame extends GameEngine {
 		// }
 		return null;
 	}
+
+	//-------------------------------------------------------
+	// AI Tanks
+	//-------------------------------------------------------
+
+	Tank[] enemyTankList;
+	Image[] enemyTankImageList;
+	Image[] enemyTurretImageList;
+	int enemyTankSpeed;
+	int enemyTurretSpeed;
+	int enemyTurnSpeed;
+	double randX;
+	double randY;
+	boolean tooClose;
+
+	//Create tanks and set properties
+	//TODO: code for selecting type of tank(what sprite to use, health etc)
+	private void initEnemyTankList() {
+		enemyTankList = new Tank[numberOfEnemyTanks];
+		enemyTankImageList = new Image[numberOfEnemyTanks];
+		enemyTurretImageList = new Image[numberOfEnemyTanks];
+		enemyTankSpeed = 100;
+		enemyTurretSpeed = 125;
+		enemyTurnSpeed = 75;
+		tooClose = true;
+
+		for (int i = 0; i < enemyTankList.length; i++) {
+			randX = rand(1024);
+			randY = rand(1024);
+			//Make enemies not too close to player or each other
+			while (distance(randX, randY, playerOne.getPositionX(), playerOne.getPositionY()) < 100 && tooClose) {
+				randX = rand(1024);
+				randY = rand(1024);
+				for(int j = 0; j < i; j++) {
+					if (enemyTankList[j] != null) {
+						if(distance(enemyTankList[i].getPositionX(), enemyTankList[i].getPositionY(), enemyTankList[j].getPositionX(), enemyTankList[j].getPositionY()) < 100) {
+							tooClose = true;
+						} else {
+							tooClose = false;
+						}
+					}
+				}
+			}
+			enemyTankList[i] = new Tank(randX, randY, enemyTankSpeed, enemyTurnSpeed, enemyTurretSpeed, tankHeightE100, tankWidthE100);
+			enemyTankList[i].setHullAngle(rand(360));
+			enemyTankList[i].setTurretAngle(rand(360));
+		}
+
+		for (int i = 0; i < enemyTankImageList.length; i++) {
+			enemyTankImageList[i] = subImage(E100SpriteSheet, 96, 0, tankWidthE100, tankHeightE100);
+		}
+
+		for (int i = 0; i < enemyTurretImageList.length; i++) {
+			enemyTurretImageList[i] = subImage(E100SpriteSheet, 0, 0, tankWidthE100, tankHeightE100);
+		}
+	}
+
+	private void updateEnemyTankList(double dt) {
+		for (Tank tank : enemyTankList) {
+			if (tank.getHealth() > 0) {
+				tank.setForward(true);
+				//Keep within bounds
+				if (tank.getPositionX() > 1024 + tank.getHeight()) {
+					tank.setHullAngle(workOutAngle(tank.getPositionX(), tank.getPositionY(), 512, 512) + 90);
+				}
+				if (tank.getPositionY() > 1024 + tank.getHeight()) {
+					tank.setHullAngle(workOutAngle(tank.getPositionX(), tank.getPositionY(), 512, 512) + 90);
+				}
+				if (tank.getPositionX() < 0 - tank.getHeight()) {
+					tank.setHullAngle(workOutAngle(tank.getPositionX(), tank.getPositionY(), 512, 512) + 90);
+				}
+				if (tank.getPositionY() < 0 - tank.getHeight()) {
+					tank.setHullAngle(workOutAngle(tank.getPositionX(), tank.getPositionY(), 512, 512) + 90);
+				}
+
+				updateTank(dt, tank);
+				double angleToPlayer = workOutAngle(tank.getPositionX(), tank.getPositionY(), playerOne.getPositionX(), playerOne.getPositionY());
+				if(checkTargetInSight(tank, playerOne) == true) {
+					tank.setHullAngle(angleToPlayer);
+				}
+				if(checkTargetInFiringRange(tank, playerOne) == true) {
+					tank.setTurretAngle(angleToPlayer + 90);
+				}
+			}
+		}
+	}
+
+	private void drawEnemyTankList() {
+		for (int i = 0; i < numberOfEnemyTanks; i++) {
+			saveCurrentTransform();
+			translate(enemyTankList[i].getPositionX(), enemyTankList[i].getPositionY());
+			rotate(enemyTankList[i].getHullAngle());
+			// Draw the tank
+			drawImage(enemyTankImageList[i], -48, -103.5);
+			// Restore last transform to undo the rotate and translate transforms
+			restoreLastTransform();
+		}
+	}
+
+	private void drawEnemyTurretList() {
+		for (int i = 0; i < numberOfEnemyTanks; i++) {
+			saveCurrentTransform();
+			translate(enemyTankList[i].getPositionX(), enemyTankList[i].getPositionY());
+			rotate(enemyTankList[i].getTurretAngle());
+			drawImage(enemyTurretImageList[i], -48, -103.5);
+			restoreLastTransform();
+		}
+	}
+
+	private boolean checkTargetInSight(Tank aiTank, Tank targetTank) {
+		if (distance(aiTank.getPositionX(), aiTank.getPositionY(), targetTank.getPositionX(), targetTank.getPositionY()) < 600) {
+			return true;
+		}
+		return false;
+	}
+
+	private boolean checkTargetInFiringRange(Tank aiTank, Tank targetTank) {
+		if (distance(aiTank.getPositionX(), aiTank.getPositionY(), targetTank.getPositionX(), targetTank.getPositionY()) < 500) {
+			return true;
+		}
+		return false;
+	}
+
 	//-------------------------------------------------------
 	// Game
 	//-------------------------------------------------------
 	// Spritesheet
-	Image playerSpritesheet;
+	Image E100SpriteSheet;
+	Image kv2Spritesheet;
+	Image m6Spritesheet;
+	Image pz4Spritesheet;
+	Image pz4gSpritesheet;
+	Image t34Spritesheet;
+	Image tiger2Spritesheet;
+	Image vk3601hSpritesheet;
 	//Menu Screen
 	Image menuImage;
 	//Paused Screen
@@ -286,6 +407,8 @@ public class TankGame extends GameEngine {
 
 	//boolean gameOver, menuState, gamePause;
 	boolean player1, player2;
+
+	int numberOfEnemyTanks;
 
 	int mouseX;
 	int mouseY;
@@ -303,9 +426,6 @@ public class TankGame extends GameEngine {
 			// start audioClip
 			object.setMovement(false);
 			stopAudioLoop(TankMovingMusic);
-
-
-
 		}
 	}
 	private GameState state = GameState.MENU;
@@ -315,7 +435,7 @@ public class TankGame extends GameEngine {
 	public void init() {
 		setWindowSize(1024, 1024);
 		// Load sprites
-		playerSpritesheet = loadImage("Tanks\\E100.png");
+		E100SpriteSheet = loadImage("Tanks\\E100.png");
 		//Load Menu Image
 		menuImage = loadImage("Menu\\TankGame.png");
 		//Load Paused Image
@@ -331,7 +451,7 @@ public class TankGame extends GameEngine {
 		// startAudioLoop(menuMusic,5);
 		// load tank driving Sound
 
-
+		numberOfEnemyTanks = 3;
 
 		// Setup Game booleans
 		//gameOver = true;
@@ -343,6 +463,7 @@ public class TankGame extends GameEngine {
 
 		// Initialise player
 		initPlayerTank();
+		initEnemyTankList();
 
 	}
 
@@ -362,6 +483,7 @@ public class TankGame extends GameEngine {
 			updateTurret(dt,playerTwo);
 			updateLaser(dt,playerOne);
 			updateLaser(dt,playerTwo);
+			updateEnemyTankList(dt);
 			Tank tankCollision = detectCollision();
 			if (tankCollision!= null){
 				System.out.println("Stop bullet");
@@ -407,6 +529,9 @@ public class TankGame extends GameEngine {
 
 
 			}
+
+			drawEnemyTankList();
+			drawEnemyTurretList();
 
 		// If the game is at menu
 		} else if(state == GameState.MENU) {
