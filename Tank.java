@@ -1,5 +1,18 @@
+import java.awt.*;
+import java.awt.geom.*;
+import javax.swing.*;
+import java.awt.event.*;
+import java.lang.*;
+
 public class Tank
 {
+  // Tank corners used for
+  private double topLeftCornerX,topLeftCornerY;
+
+  private double topRightCornerX,topRightCornerY;
+  private double bottomLeftCornerX,bottomLeftCornerY;
+  private double bottomRightCornerX,bottomRightCornerY;
+
   // On game VALUE
   private int health = 100;
   // Tanks
@@ -50,6 +63,7 @@ public class Tank
 			if (hullAngle > 360) {
 				setHullAngle(0);
 			}
+      setCorners(positionX,positionY,hullAngle);
   }
 
   public void turnLeft(double dt) {
@@ -57,16 +71,22 @@ public class Tank
 			if(hullAngle < -360) {
 				setHullAngle(0);
 			}
+      setCorners(positionX,positionY,hullAngle);
+
   }
 
   public void moveForward(double dt) {
     positionX += Math.cos(Math.toRadians(hullAngle-90)) * velocityX * dt;
     positionY += Math.sin(Math.toRadians(hullAngle-90)) * velocityY * dt;
+    setCorners(positionX,positionY,hullAngle);
+
   }
 
   public void moveBackward(double dt) {
     positionX -= Math.cos(Math.toRadians(hullAngle-90)) * velocityX * dt;
     positionY -= Math.sin(Math.toRadians(hullAngle-90)) * velocityY * dt;
+    setCorners(positionX,positionY,hullAngle);
+
   }
 
   // Positions
@@ -197,4 +217,92 @@ public class Tank
   public void setShooting(boolean shooting){
     this.shooting = shooting;
   }
+
+
+
+
+  // public double getTopLeftCorner(){
+  //   return topLeftCorner;
+  // }
+  // // public void setTopLeftCorner(double x,double y){
+  // //
+  // //   this.topLeftCorner = topLeftCorner;
+  // // }
+  // public double getTopRightCorner(){
+  //   return topRightCorner;
+  // }
+  // public double setTopRightCorner(double x, double y){
+  //
+  // }
+  public void setCorners(double x, double y,double angle){
+    // Top Left
+    this.topLeftCornerX = (y - height/2) * Math.sin(angle) + (x-width/2) * Math.cos(angle);
+    this.topLeftCornerY = (y- height/2)  * Math.cos(angle) - (x -width/2)* Math.sin(angle);
+    // Top Right
+    this.topRightCornerX = (y- height/2) * Math.sin(angle) + (x+width/2) * Math.cos(angle);
+    this.topRightCornerY = (y - height/2)* Math.cos(angle) - (x+width/2) * Math.sin(angle);
+    // Bottom Left
+    this.bottomLeftCornerX = (y + height/2) * Math.sin(angle)+ (x-width/2) * Math.cos(angle);
+    this.bottomLeftCornerY = (y+ height/2)  * Math.cos(angle) - (x -width/2)* Math.sin(angle);
+    // Bottom Right
+    this.bottomRightCornerX = (y+ height/2) * Math.sin(angle) + (x+width/2) * Math.cos(angle);
+    this.bottomRightCornerY = (y +height/2)* Math.cos(angle) - (x+width/2) * Math.sin(angle);
+    // this.topLeftCornerX = (y - height/2)+ (x-width/2) ;
+    // this.topLeftCornerY = (y- height/2) - (x -width/2);
+    // // Top Right
+    // this.topRightCornerX = (y- height/2) + (x+width/2) ;
+    // this.topRightCornerY = (y - height/2) - (x+width/2) ;
+    // // Bottom Left
+    // this.bottomLeftCornerX = (y + height/2) + (x-width/2) ;
+    // this.bottomLeftCornerY = (y+ height/2)   - (x -width/2);
+    // // Bottom Right
+    // this.bottomRightCornerX = (y+ height/2)  + (x+width/2) ;
+    // this.bottomRightCornerY = (y +height/2) - (x+width/2) ;
+
+    System.out.println("------------------------------");
+    System.out.println("X: " + positionX + "  Y : " + positionY);
+    System.out.println("Width: " + width);
+
+    System.out.println("X plus half of width: " + (positionX+ width/2)) ;
+
+
+    System.out.println("Top Left Corner = (" +  topLeftCornerX +"," +topLeftCornerY +")" );
+    System.out.println("Top Right Corner = (" + topRightCornerX + "," +topRightCornerY +")");
+
+    System.out.println("Bottom Left Corner = ("+ bottomLeftCornerX +"," +bottomLeftCornerY +")");
+    System.out.println("Bottom Right Corner = (" + bottomRightCornerX + "," +bottomRightCornerY +")");
+
+  }
+  public boolean collision (Shape shape){
+    if (shape.contains(topLeftCornerX,topLeftCornerY)){
+      return true;
+    }
+    else if (shape.contains(topRightCornerX,topRightCornerY)){
+          return true;
+    }
+    else if (shape.contains(bottomRightCornerX,bottomRightCornerY)){
+          return true;
+    }
+    else if (shape.contains(bottomLeftCornerX,bottomLeftCornerY)){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+  public double getTopLeftCornerX(){
+    return topLeftCornerX;
+  }
+  public double getTopLeftCornerY(){
+    return topLeftCornerY;
+  }
+  // public void set(double bottomLeftCorner){
+  //   this.bottomLeftCorner = bottomLeftCorner;
+  // }
+  // public double getBottomRightCorner(){
+  //   return bottomRightCorner;
+  // }
+  // public void set(double bottomRightCorner){
+  //   this.bottomRightCorner = bottomRightCorner;
+  // }
 }

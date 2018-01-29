@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import javax.swing.*;
 import java.awt.event.*;
+// import java.awt.geom.AffineTransform;
 
 
 
@@ -37,6 +38,7 @@ public class TankGame extends GameEngine {
 	// Tank sound effects
 	AudioClip TankMovingMusic =  loadAudio("Music\\tankDriving.wav");
 	AudioClip TankFire =  loadAudio("Music\\fire.wav");
+	AudioClip TankExplosion =  loadAudio("Music\\explosion.wav");
 
 ;
 	// Init player Function
@@ -44,8 +46,8 @@ public class TankGame extends GameEngine {
 		// Load the player Tank sprite
 		playerTankImage   = subImage(playerSpritesheet,96, 0, tankWidthE100, tankHeightE100);
 		playerTurretImage = subImage(playerSpritesheet, 0, 0, tankWidthE100, tankHeightE100);
-		playerOne = new Tank(width()/2, height()/2, 100, 75, 125,tankHeightE100,tankWidthE100);
-		playerTwo = new Tank(width()/2-100, height()/2, 100, 75, 125,tankHeightE100,tankWidthE100);
+		playerOne = new Tank(100,100, 100, 75, 125,tankHeightE100,tankWidthE100);
+		playerTwo = new Tank(0,0, 100, 75, 125,tankHeightE100,tankWidthE100);
 		// bulletImage = subImage(bulletImageSprite,0,0,16,16);
 	}
 	// TODO the parameter name should be change from 'playerOne' to 'object'
@@ -211,46 +213,59 @@ public class TankGame extends GameEngine {
 			}
 	}
 	// Overlap two rectangles
-	public boolean overlaps (Rectangle first,Rectangle second) {
-    return (second.x < first.x + first.width && second.x + second.width > first.x && second.y < first.y + first.height && second.y + second.height > first.y);
-}
+// 	public boolean overlaps (Rectangle first,Rectangle second) {
+//     return (second.x < first.x + first.width && second.x + second.width > first.x && second.y < first.y + first.height && second.y + second.height > first.y);
+// }
 	// Detect collision
 	public Tank detectCollision(){
-		int tankE100Height = playerOne.getHeight();
-		int tankE100Width = playerOne.getWidth();
 
-		Rectangle playerOneHitArea = new Rectangle((int)playerOne.getPositionX(),(int)playerOne.getPositionY(),(int)playerOne.getWidth(),(int)playerOne.getHeight());
-
-		Bullet playerOneBullet = playerOne.getBullet();
-		// Circle playerOneBulletHitArea = new Circle ((int)playerOneBullet.getPositionX(),(int)playerOneBullet.getPositionY(),playerOneBullet.getRadius());
-		Rectangle playerOneBulletHitArea = new Rectangle((int)playerOneBullet.getPositionX(),(int)playerOneBullet.getPositionY(),playerOneBullet.getRadius(),playerOneBullet.getRadius());
-
-		Rectangle playerTwoHitArea = new Rectangle((int) playerTwo.getPositionX(),(int)playerTwo.getPositionY(),playerTwo.getWidth(),tankE100Height);
-		Bullet playerTwoBullet = playerTwo.getBullet();
-		Rectangle playerTwoBulletHitArea = new Rectangle((int)playerTwoBullet.getPositionX(),(int)playerTwoBullet.getPositionY(),playerTwoBullet.getRadius(),playerTwoBullet.getRadius());
-
-    // Assuming there is an intersect method, otherwise just handcompare the values
-    if (overlaps(playerOneHitArea,playerTwoBulletHitArea))
-    {
-			System.out.println("Player One was hit by the second player bullet.");
-			playerOne.setHealth(playerOne.getHealth()-10);
-			return playerTwo;
-       // A Collision!
-    }
-		if (overlaps(playerTwoHitArea,playerOneBulletHitArea))
-		{
-			System.out.println("Player Two was hit by the second player bullet.");
-			playerTwo.setHealth(playerTwo.getHealth()-10);
-			return playerOne;
-		}
-		else{
-			return null;
-		}
+		// int tankE100Height = playerOne.getHeight();
+		// int tankE100Width = playerOne.getWidth();
+    //
+		// Rectangle playerOneHitArea = new Rectangle((int)playerOne.getTopLeftCornerX(),(int)playerOne.getTopLeftCornerY(),(int)playerOne.getWidth(),(int)playerOne.getHeight());
+		// AffineTransform tankOne = new AffineTransform();
+    // tankOne.rotate(Math.toRadians(playerOne.getHullAngle()));
+		// Shape newPlayerOneHitArea = tankOne.createTransformedShape(playerOneHitArea);
+    //
+		// Rectangle playerTwoHitArea = new Rectangle((int)playerTwo.getTopLeftCornerX(),(int) playerTwo.getTopLeftCornerY(),(int)playerTwo.getWidth(),(int)playerTwo.getHeight());
+		// AffineTransform tankTwo = new AffineTransform();
+    // tankTwo.rotate(Math.toRadians(playerTwo.getHullAngle()));
+		// Shape newPlayerTwoHitArea = tankTwo.createTransformedShape(playerTwoHitArea);
+    //
+		// if (playerTwo.collision(newPlayerOneHitArea)){
+		// 	System.out.println("They are touching");
+		// }
+		// Bullet playerOneBullet = pladel *yerOne.getBullet();
+		// // Circle playerOneBulletHitArea = new Circle ((int)playerOneBullet.getPositionX(),(int)playerOneBullet.getPositionY(),playerOneBullet.getRadius());
+		// Rectangle playerOneBulletHitArea = new Rectangle((int)playerOneBullet.getPositionX(),(int)playerOneBullet.getPositionY(),playerOneBullet.getRadius(),playerOneBullet.getRadius());
+    //
+		// Rectangle playerTwoHitArea = new Rectangle((int) playerTwo.getPositionX(),(int)playerTwo.getPositionY(),playerTwo.getWidth(),tankE100Height);
+		// Bullet playerTwoBullet = playerTwo.getBullet();
+		// Rectangle playerTwoBulletHitArea = new Rectangle((int)playerTwoBullet.getPositionX(),(int)playerTwoBullet.getPositionY(),playerTwoBullet.getRadius(),playerTwoBullet.getRadius());
+    //
+    // // Assuming there is an intersect method, otherwise just handcompare the values
+    // if (newPlayerOneHitArea.intersects(playerTwoBulletHitArea))
+    // {
+		// 	System.out.println("Player One was hit by the second player bullet.");
+		// 	playerOne.setHealth(playerOne.getHealth()-10);
+		// 	return playerTwo;
+    //    // A Collision!
+    // }
+		// // if (overlaps(newPlayerOneHitArea,playerOneBulletHitArea))
+		// // {
+		// // 	System.out.println("Player Two was hit by the second player bullet.");
+		// // 	playerTwo.setHealth(playerTwo.getHealth()-10);
+		// // 	return playerOne;
+		// // }
+		// else{
+		// 	return null;
+		// }
 		// if (playerOneHitArea.Intersects(playerTwoHitArea))
 		// {
 		// 	System.out.println("Player One was hit.");
 		// 	 // A Collision!
 		// }
+		return null;
 	}
 	//-------------------------------------------------------
 	// Game
@@ -452,6 +467,8 @@ public class TankGame extends GameEngine {
 			playerOne.setBullet(bullet);
 			fireLaser(playerOne);
 			playAudio(TankFire);
+			playAudio(TankExplosion);
+
 		}
 
 		// Second player
