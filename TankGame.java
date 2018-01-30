@@ -1,3 +1,4 @@
+// package massey;
 import java.awt.*;
 import java.awt.geom.*;
 import javax.swing.*;
@@ -47,7 +48,7 @@ public class TankGame extends GameEngine {
 
 		playerTankImage   = subImage(E100SpriteSheet,96, 0, tankWidthE100, tankHeightE100);
 		playerTurretImage = subImage(E100SpriteSheet, 0, 0, tankWidthE100, tankHeightE100);
-		playerOne = new Tank(width()/2, height()/2, 100, 75, 125,tankHeightE100,tankWidthE100);
+		playerOne = new Tank(0,0, 100, 75, 125,tankHeightE100,tankWidthE100);
 		playerTwo = new Tank(width()/2-100, height()/2, 100, 75, 125,tankHeightE100,tankWidthE100);
 		// bulletImage = subImage(bulletImageSprite,0,0,16,16);
 	}
@@ -201,6 +202,8 @@ public class TankGame extends GameEngine {
 
 			// Set it to active
 			bullet.setFire(true);
+//			System.out.println(playerOne.getHitArea().getBounds());
+
 			}
 	}
 	// Overlap two rectangles
@@ -208,7 +211,26 @@ public class TankGame extends GameEngine {
 //     return (second.x < first.x + first.width && second.x + second.width > first.x && second.y < first.y + first.height && second.y + second.height > first.y);
 // }
 	// Detect collision
-	public Tank detectCollision(){
+	public void detectCollision(){
+		// System.out.println("Player One x: " + playerOne.getTopLeftCornerX() +"Player One y: " + playerOne.getTopLeftCornerY());
+
+		// if (playerOne.getPositionX()<0) {//|| playerOne.getTopRightCornerX()  >= -109|| playerOne.getBottomLeftCornerX() >= -109 || playerOne.getBottomRightCornerX()  >= -109){
+		// 	// playerOne.setVelocityX(0);
+			// System.out.println("Player One x " +playerOne.getPositionX() + " y = " + playerOne.getPositionY());
+			// System.out.println(playerOne.getHitArea().getBounds());
+			System.out.println("--------------------------");
+
+			System.out.println("Player One top left (x,y) = "+ playerOne.getTopLeftCornerX() +","+ playerOne.getTopLeftCornerY()+ ")");
+//			System.out.println("Player One top right (x,y) = "+ playerOne.getTopRightCornerX() +","+ playerOne.getTopRightCornerY()+ ")");
+
+			// System.out.println("Player One top right x value: " + playerOne.getTopRightCornerX());
+			System.out.println("Player One bottom left (x,y) = "+ playerOne.getBottomLeftCornerX() +","+ playerOne.getBottomLeftCornerY()+ ")");
+
+//			System.out.println("Player One bottom left x value: " + playerOne.getBottomLeftCornerX());
+			// System.out.println("Player One bottom right x value: " + playerOne.getBottomRightCornerX());
+    //
+		// }
+		// if (playerOne.getHitArea().getBounds()[0]);
 
 		// int tankE100Height = playerOne.getHeight();
 		// int tankE100Width = playerOne.getWidth();
@@ -256,7 +278,6 @@ public class TankGame extends GameEngine {
 		// 	System.out.println("Player One was hit.");
 		// 	 // A Collision!
 		// }
-		return null;
 	}
 
 	//-------------------------------------------------------
@@ -417,7 +438,7 @@ public class TankGame extends GameEngine {
 	private void TankMoveSound(Tank object){
 		if (object.getMovement() == false){
 			// start audioClip
-			startAudioLoop(TankMovingMusic,5);
+			// startAudioLoop(TankMovingMusic,5);
 			object.setMovement(true);
 		}
 	}
@@ -425,7 +446,7 @@ public class TankGame extends GameEngine {
 		if (object.getMovement() == true){
 			// start audioClip
 			object.setMovement(false);
-			stopAudioLoop(TankMovingMusic);
+			// stopAudioLoop(TankMovingMusic);
 		}
 	}
 	private GameState state = GameState.MENU;
@@ -484,15 +505,15 @@ public class TankGame extends GameEngine {
 			updateLaser(dt,playerOne);
 			updateLaser(dt,playerTwo);
 			updateEnemyTankList(dt);
-			Tank tankCollision = detectCollision();
-			if (tankCollision!= null){
-				System.out.println("Stop bullet");
-				Bullet bulletToStop = tankCollision.getBullet();
-				bulletToStop.setPositionX(0);
-				bulletToStop.setPositionY(0);
-				bulletToStop.setVelocityX(0);
-				bulletToStop.setVelocityY(0);
-			}
+			// detectCollision();
+			// if (tankCollision!= null){
+			// 	System.out.println("Stop bullet");
+			// 	Bullet bulletToStop = tankCollision.getBullet();
+			// 	bulletToStop.setPositionX(0);
+			// 	bulletToStop.setPositionY(0);
+			// 	bulletToStop.setVelocityX(0);
+			// 	bulletToStop.setVelocityY(0);
+			// }
 		}
 		if (state == GameState.MENU) {
 			initPlayerTank();
@@ -593,7 +614,7 @@ public class TankGame extends GameEngine {
 			fireLaser(playerOne);
 			playAudio(TankFire);
 			playAudio(TankExplosion);
-
+			detectCollision();
 		}
 
 		// Second player

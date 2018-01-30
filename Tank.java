@@ -1,11 +1,11 @@
-import java.awt.*;
-import java.awt.geom.*;
-import javax.swing.*;
-import java.awt.event.*;
-import java.lang.*;
+// package massey;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 
 public class Tank
 {
+  Shape newHitArea;
   // Tank corners used for
   private double topLeftCornerX,topLeftCornerY;
 
@@ -46,6 +46,9 @@ public class Tank
 
   private int height;
   private int width;
+
+  private double dt;
+
   public Tank(double positionX, double positionY, double velocity, double turnSpeed, double turretSpeed,int height, int width){
     this.positionX = positionX;
     this.positionY = positionY;
@@ -66,7 +69,10 @@ public class Tank
 			if (hullAngle > 360) {
 				setHullAngle(0);
 			}
-      setCorners(positionX,positionY,hullAngle);
+      // setCorners();
+      drawHitArea();
+      this.dt = dt;
+      setCorners("+");
   }
 
   public void turnLeft(double dt) {
@@ -74,22 +80,26 @@ public class Tank
 			if(hullAngle < -360) {
 				setHullAngle(0);
 			}
-      setCorners(positionX,positionY,hullAngle);
-
+      this.dt = dt;
+      // setCorners();
+      drawHitArea();
+      setCorners("-");
   }
 
   public void moveForward(double dt) {
     positionX += Math.cos(Math.toRadians(hullAngle-90)) * velocityX * dt;
     positionY += Math.sin(Math.toRadians(hullAngle-90)) * velocityY * dt;
-    setCorners(positionX,positionY,hullAngle);
-
+    drawHitArea();
+    this.dt = dt;
+    setCorners("+");
   }
 
   public void moveBackward(double dt) {
     positionX -= Math.cos(Math.toRadians(hullAngle-90)) * velocityX * dt;
     positionY -= Math.sin(Math.toRadians(hullAngle-90)) * velocityY * dt;
-    setCorners(positionX,positionY,hullAngle);
-
+    setCorners("-");
+    drawHitArea();
+    this.dt = dt;
   }
 
   // Positions
@@ -220,6 +230,15 @@ public class Tank
   public void setShooting(boolean shooting){
     this.shooting = shooting;
   }
+  public void drawHitArea(){
+    Rectangle HitArea = new Rectangle((int)positionX,(int)positionY,(int)width,(int)height);
+		AffineTransform HitAreaTransform = new AffineTransform();
+    HitAreaTransform.rotate(hullAngle);
+    this.newHitArea = HitAreaTransform.createTransformedShape(HitArea);
+  }
+  public Shape getHitArea(){
+    return newHitArea;
+  }
 
 
 
@@ -237,19 +256,51 @@ public class Tank
   // public double setTopRightCorner(double x, double y){
   //
   // }
-  public void setCorners(double x, double y,double angle){
-    // Top Left
-    this.topLeftCornerX = (y - height/2) * Math.sin(angle) + (x-width/2) * Math.cos(angle);
-    this.topLeftCornerY = (y- height/2)  * Math.cos(angle) - (x -width/2)* Math.sin(angle);
-    // Top Right
-    this.topRightCornerX = (y- height/2) * Math.sin(angle) + (x+width/2) * Math.cos(angle);
-    this.topRightCornerY = (y - height/2)* Math.cos(angle) - (x+width/2) * Math.sin(angle);
-    // Bottom Left
-    this.bottomLeftCornerX = (y + height/2) * Math.sin(angle)+ (x-width/2) * Math.cos(angle);
-    this.bottomLeftCornerY = (y+ height/2)  * Math.cos(angle) - (x -width/2)* Math.sin(angle);
-    // Bottom Right
-    this.bottomRightCornerX = (y+ height/2) * Math.sin(angle) + (x+width/2) * Math.cos(angle);
-    this.bottomRightCornerY = (y +height/2)* Math.cos(angle) - (x+width/2) * Math.sin(angle);
+  public void setCorners(String direction){
+    if (direction == "+"){
+    	//top right corner y
+          // Top Right
+//          topRightCornerX = positionX + Math.cos(Math.toRadians(hullAngle-90)) * velocityX * dt + (width/2);
+//          topRightCornerY = positionY + Math.sin(Math.toRadians(hullAngle-90)) * velocityY * dt - (height/2);
+          // Top Left
+          topLeftCornerX = positionX + Math.cos(Math.toRadians(hullAngle-90)) * velocityX * dt - (width/2);
+          topLeftCornerY = positionY + Math.sin(Math.toRadians(hullAngle-90)) * velocityY * dt - (height/2);
+
+
+          bottomLeftCornerX = positionX + Math.cos(Math.toRadians(hullAngle-90)) * velocityX * dt + (width/2);
+          bottomLeftCornerY = positionY + Math.sin(Math.toRadians(hullAngle-90)) * velocityY * dt + (height/2);
+
+    }
+    else{
+        // Top Right
+//        topRightCornerX = positionX - Math.cos(Math.toRadians(hullAngle-90)) * velocityX * dt + (width/2);
+//        topRightCornerY = positionY - Math.sin(Math.toRadians(hullAngle-90)) * velocityY * dt - (height/2);
+        // Top Left
+        topLeftCornerX = positionX - Math.cos(Math.toRadians(hullAngle-90)) * velocityX * dt - (width/2);
+        topLeftCornerY = positionY - Math.sin(Math.toRadians(hullAngle-90)) * velocityY * dt - (height/2);
+
+        bottomLeftCornerX = positionX - Math.cos(Math.toRadians(hullAngle-90)) * velocityX * dt + (width/2);
+        bottomLeftCornerY = positionY - Math.sin(Math.toRadians(hullAngle-90)) * velocityY * dt + (height/2);
+    }
+
+    //(positionY - height/2) * Math.sin(Math.toRadians(hullAngle-90)) + (positionX-width/2) * Math.cos(Math.toRadians(hullAngle-90));
+    // topLeftCornerY = topLeftCornerY + (positionY- height/2)  * Math.cos(Math.toRadians(hullAngle-90)) - (positionX-width/2)* Math.sin(Math.toRadians(hullAngle-90));
+
+    // topRightCornerX = topRightCornerX- (positionY- height/2) * Math.sin(Math.toRadians(hullAngle-90)) + (positionX+width/2) * Math.cos(Math.toRadians(hullAngle-90));
+    // topRightCornerY = topRightCornerY-(positionY - height/2)* Math.cos(Math.toRadians(hullAngle-90)) - (positionX+width/2) * Math.sin(Math.toRadians(hullAngle-90));
+    // // Bottom Left
+    // bottomLeftCornerX = (positionY + height/2) * Math.sin(Math.toRadians(hullAngle-90))+ (positionX-width/2) * Math.cos(Math.toRadians(hullAngle-90));
+    // bottomLeftCornerY = (positionY+ height/2)  * Math.cos(Math.toRadians(hullAngle-90)) - (positionX -width/2)* Math.sin(Math.toRadians(hullAngle-90));
+    // // Bottom Right
+    // bottomRightCornerX = (positionY+ height/2) * Math.sin(Math.toRadians(hullAngle-90)) + (positionX+width/2) * Math.cos(Math.toRadians(hullAngle-90));
+    // bottomRightCornerY = (positionY +height/2)* Math.cos(Math.toRadians(hullAngle-90)) - (positionX+width/2) * Math.sin(Math.toRadians(hullAngle-90));
+
+
+    // topLeftCornerX = Math.cos(Math.toRadians(hullAngle-90)) * velocityX * dt;
+
+
+
+
     // this.topLeftCornerX = (y - height/2)+ (x-width/2) ;
     // this.topLeftCornerY = (y- height/2) - (x -width/2);
     // // Top Right
@@ -262,18 +313,18 @@ public class Tank
     // this.bottomRightCornerX = (y+ height/2)  + (x+width/2) ;
     // this.bottomRightCornerY = (y +height/2) - (x+width/2) ;
 
-    System.out.println("------------------------------");
-    System.out.println("X: " + positionX + "  Y : " + positionY);
-    System.out.println("Width: " + width);
-
-    System.out.println("X plus half of width: " + (positionX+ width/2)) ;
-
-
-    System.out.println("Top Left Corner = (" +  topLeftCornerX +"," +topLeftCornerY +")" );
-    System.out.println("Top Right Corner = (" + topRightCornerX + "," +topRightCornerY +")");
-
-    System.out.println("Bottom Left Corner = ("+ bottomLeftCornerX +"," +bottomLeftCornerY +")");
-    System.out.println("Bottom Right Corner = (" + bottomRightCornerX + "," +bottomRightCornerY +")");
+    // System.out.println("------------------------------");
+    // System.out.println("X: " + positionX + "  Y : " + positionY);
+    // System.out.println("Width: " + width);
+    //
+    // System.out.println("X plus half of width: " + (positionX+ width/2)) ;
+    //
+    //
+    // System.out.println("Top Left Corner = (" +  topLeftCornerX +"," +topLeftCornerY +")" );
+    // System.out.println("Top Right Corner = (" + topRightCornerX + "," +topRightCornerY +")");
+    //
+    // System.out.println("Bottom Left Corner = ("+ bottomLeftCornerX +"," +bottomLeftCornerY +")");
+    // System.out.println("Bottom Right Corner = (" + bottomRightCornerX + "," +bottomRightCornerY +")");
 
   }
   public boolean collision (Shape shape){
@@ -298,6 +349,26 @@ public class Tank
   }
   public double getTopLeftCornerY(){
     return topLeftCornerY;
+  }
+  public double getTopRightCornerX(){
+    return topRightCornerX;
+  }
+  public double getTopRightCornerY(){
+    return topRightCornerY;
+  }
+
+
+  public double getBottomLeftCornerX(){
+    return bottomLeftCornerX;
+  }
+  public double getBottomLeftCornerY(){
+    return bottomLeftCornerY;
+  }
+  public double getBottomRightCornerX(){
+    return bottomRightCornerX;
+  }
+  public double getBottomRightCornerY(){
+    return bottomRightCornerY;
   }
   // public void set(double bottomLeftCorner){
   //   this.bottomLeftCorner = bottomLeftCorner;
