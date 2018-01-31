@@ -41,8 +41,8 @@ public class TankGame extends GameEngine {
 
 		playerOne = new Tank(width()/2, height()/2, 100, 75, 125,"E100");
 		playerTwo = new Tank(width()/2-100, height()/2, 100, 75, 125,"E100");
-		playerTankImage   = subImage(E100SpriteSheet,playerOne.getWidth(), 0, playerOne.getWidth(), playerOne.getHeight());
-		playerTurretImage = subImage(E100SpriteSheet, 0, 0, playerOne.getWidth(), playerOne.getHeight());
+		playerTankImage   = subImage(e100SpriteSheet,playerOne.getWidth(), 0, playerOne.getWidth(), playerOne.getHeight());
+		playerTurretImage = subImage(e100SpriteSheet, 0, 0, playerOne.getWidth(), playerOne.getHeight());
 		// bulletImage = subImage(bulletImageSprite,0,0,16,16);
 	}
 	// Draw the tank body
@@ -276,7 +276,6 @@ public class TankGame extends GameEngine {
 	boolean tooClose;
 
 	//Create tanks and set properties
-	//TODO: code for selecting type of tank(what sprite to use, health etc)
 	private void initEnemyTankList() {
 		enemyTankList = new Tank[numberOfEnemyTanks];
 		enemyTankImageList = new Image[numberOfEnemyTanks];
@@ -294,7 +293,7 @@ public class TankGame extends GameEngine {
 				randX = rand(1024);
 				randY = rand(1024);
 				for(int j = 0; j < i; j++) {
-					if (enemyTankList[j] != null) {
+					if (enemyTankList[j] != null && enemyTankList[i] != null) {
 						if(distance(enemyTankList[i].getPositionX(), enemyTankList[i].getPositionY(), enemyTankList[j].getPositionX(), enemyTankList[j].getPositionY()) < 100) {
 							tooClose = true;
 						} else {
@@ -303,23 +302,37 @@ public class TankGame extends GameEngine {
 					}
 				}
 			}
-			int type = rand(3);
+			int type = rand(6);
 			if (type <=1) {
 				enemyTankList[i] = new Tank(randX, randY, enemyTankSpeed, enemyTurnSpeed, enemyTurretSpeed, "M6");
-				enemyTankImageList[i] = subImage(M6SpriteSheet, enemyTankList[i].getWidth(), 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
-				enemyTurretImageList[i] = subImage(M6SpriteSheet, 0, 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+				enemyTankImageList[i] = subImage(m6SpriteSheet, enemyTankList[i].getWidth(), 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+				enemyTurretImageList[i] = subImage(m6SpriteSheet, 0, 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
 			}
 			if (type > 1 && type <=2) {
 				enemyTankList[i] = new Tank(randX, randY, enemyTankSpeed, enemyTurnSpeed, enemyTurretSpeed, "KV2");
-				enemyTankImageList[i] = subImage(KV2SpriteSheet, enemyTankList[i].getWidth(), 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
-				enemyTurretImageList[i] = subImage(KV2SpriteSheet, 0, 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+				enemyTankImageList[i] = subImage(kv2SpriteSheet, enemyTankList[i].getWidth(), 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+				enemyTurretImageList[i] = subImage(kv2SpriteSheet, 0, 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
 			}
 			if (type > 2 && type <=3) {
 				enemyTankList[i] = new Tank(randX, randY, enemyTankSpeed, enemyTurnSpeed, enemyTurretSpeed, "PZ4G");
-				enemyTankImageList[i] = subImage(PZ4GSpriteSheet, enemyTankList[i].getWidth(), 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
-				enemyTurretImageList[i] = subImage(PZ4GSpriteSheet, 0, 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+				enemyTankImageList[i] = subImage(pz4gSpriteSheet, enemyTankList[i].getWidth(), 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+				enemyTurretImageList[i] = subImage(pz4gSpriteSheet, 0, 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+			}	
+			if (type > 3 && type <=4) {
+				enemyTankList[i] = new Tank(randX, randY, enemyTankSpeed, enemyTurnSpeed, enemyTurretSpeed, "PZ4");
+				enemyTankImageList[i] = subImage(pz4SpriteSheet, enemyTankList[i].getWidth(), 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+				enemyTurretImageList[i] = subImage(pz4SpriteSheet, 0, 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+			}			
+			if (type > 4 && type <=5) {
+				enemyTankList[i] = new Tank(randX, randY, enemyTankSpeed, enemyTurnSpeed, enemyTurretSpeed, "T34");
+				enemyTankImageList[i] = subImage(t34SpriteSheet, enemyTankList[i].getWidth(), 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+				enemyTurretImageList[i] = subImage(t34SpriteSheet, 0, 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+			}					
+			if (type > 5 && type <=6) {
+				enemyTankList[i] = new Tank(randX, randY, enemyTankSpeed, enemyTurnSpeed, enemyTurretSpeed, "VK3601h");
+				enemyTankImageList[i] = subImage(vk3601hSpriteSheet, enemyTankList[i].getWidth(), 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+				enemyTurretImageList[i] = subImage(vk3601hSpriteSheet, 0, 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
 			}
-
 			enemyTankList[i].setHullAngle(rand(360));
 			enemyTankList[i].setTurretAngle(rand(360));
 		}
@@ -346,6 +359,12 @@ public class TankGame extends GameEngine {
 				updateTank(dt, tank);
 				double angleToPlayer = workOutAngle(tank.getPositionX(), tank.getPositionY(), playerOne.getPositionX(), playerOne.getPositionY());
 				if(checkTargetInSight(tank, playerOne) == true) {
+					if (angleToPlayer < tank.getHullAngle()) {
+						tank.setHullAngle(tank.getHullAngle() - tank.getTurnSpeed() * dt);
+					}
+					if (angleToPlayer > tank.getHullAngle()) {
+						tank.setHullAngle(tank.getHullAngle() + tank.getTurnSpeed() * dt);
+					}
 					//tank.setHullAngle(angleToPlayer);
 				}
 				if(checkTargetInFiringRange(tank, playerOne) == true) {
@@ -379,7 +398,7 @@ public class TankGame extends GameEngine {
 	}
 
 	private boolean checkTargetInSight(Tank aiTank, Tank targetTank) {
-		if (distance(aiTank.getPositionX(), aiTank.getPositionY(), targetTank.getPositionX(), targetTank.getPositionY()) < 250) {
+		if (distance(aiTank.getPositionX(), aiTank.getPositionY(), targetTank.getPositionX(), targetTank.getPositionY()) < 300) {
 			return true;
 		}
 		return false;
@@ -396,13 +415,12 @@ public class TankGame extends GameEngine {
 	// Game
 	//-------------------------------------------------------
 	// Spritesheet
-	Image E100SpriteSheet;
-	Image KV2SpriteSheet;
-	Image M6SpriteSheet;
+	Image e100SpriteSheet;
+	Image kv2SpriteSheet;
+	Image m6SpriteSheet;
 	Image pz4SpriteSheet;
-	Image PZ4GSpriteSheet;
+	Image pz4gSpriteSheet;
 	Image t34SpriteSheet;
-	Image tiger2SpriteSheet;
 	Image vk3601hSpriteSheet;
 	//Menu Screen
 	Image menuImage;
@@ -446,12 +464,15 @@ public class TankGame extends GameEngine {
 	//
 	// Function to initialise the game
 	public void init() {
-		setWindowSize(1024, 1024);
+		setWindowSize(1024, 1024);		
 		// Load sprites
-		E100SpriteSheet = loadImage("Tanks\\E100.png");
-		M6SpriteSheet = loadImage("Tanks\\M6.png");
-		KV2SpriteSheet = loadImage("Tanks\\KV2.png");
-		PZ4GSpriteSheet = loadImage("Tanks\\PZ4G.png");
+		e100SpriteSheet = loadImage("Tanks\\E100.png");
+		m6SpriteSheet = loadImage("Tanks\\M6.png");
+		kv2SpriteSheet = loadImage("Tanks\\KV2.png");
+		pz4gSpriteSheet = loadImage("Tanks\\Pz4G.png");
+		pz4SpriteSheet  = loadImage("Tanks\\PZ4.png");
+		t34SpriteSheet  = loadImage("Tanks\\T34.png");
+		vk3601hSpriteSheet  = loadImage("Tanks\\VK3601h.png");
 		//Load Menu Image
 		menuImage = loadImage("Menu\\TankGame.png");
 		//Load Paused Image
