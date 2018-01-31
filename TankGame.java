@@ -503,13 +503,22 @@ public class TankGame extends GameEngine {
 		}
 		if (state == GameState.PLAYING) {
 			// Update the players
-			updateTank(dt,playerOne);
-			updateTurret(dt,playerOne);
-			updateTank(dt,playerTwo);
-			updateTurretP2(dt,playerTwo);
-			updateLaser(dt,playerOne);
-			updateLaser(dt,playerTwo);
+			if (player1 == true) {
+				updateTank(dt,playerOne);
+				updateTurret(dt,playerOne);
+				updateLaser(dt,playerOne);
+			}
+			if (player2 == true) {
+				updateTank(dt,playerOne);
+				updateTurret(dt,playerOne);
+				updateLaser(dt,playerOne);
+				updateTank(dt,playerTwo);
+				updateTurretP2(dt,playerTwo);
+				updateLaser(dt,playerTwo);
+			}
+			
 			updateEnemyTankList(dt);
+			
 			Tank tankCollision = detectCollision();
 			if (tankCollision!= null){
 				System.out.println("Stop bullet");
