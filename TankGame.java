@@ -1,4 +1,5 @@
 
+
 import java.awt.*;
 import java.awt.geom.*;
 import javax.swing.*;
@@ -26,6 +27,8 @@ int height = 1024;
 // Tank types
 int tankHeightE100 = 190;
 int tankWidthE100 = 96;
+
+boolean explosion;
 //-------------------------------------------------------
 // Tank Objects
 //-------------------------------------------------------
@@ -39,12 +42,33 @@ Tank playerTwo;
 AudioClip TankMovingMusic =  loadAudio("Music\\tankDriving.wav");
 AudioClip TankFire =  loadAudio("Music\\fire.wav");
 AudioClip TankExplosion =  loadAudio("Music\\explosion.wav");
+
+// Explosion animation
+
+Image explosionSheet;
+Image[] frames;
+int currentFrame;
+double animTime;
+
 // Tank[] playerTankList;
 
 ;
 // Init player Function
 public void initPlayerTank() {
+	explosionSheet = loadImage("Bullets\\explosion.png");
+	frames = new Image[100];
 
+	// Load Images
+	for(int iy = 0; iy < 7; iy++) {
+		for(int ix = 0; ix < 3; ix++) {
+//			frames[iy*6 + ix] = subImage(explosionSheet, ix*230, iy*296, 234, 181);
+			frames[iy*6 + ix] = subImage(explosionSheet, ix*22, iy*28, 22, 28);
+
+		}
+	}
+
+	// Start Animation Time
+	animTime = 0;
 	// Load the player Tank sprite
 
 	playerTankImage   = subImage(E100SpriteSheet,99, 91, 90, 110);
@@ -68,10 +92,10 @@ public void updateScore(){
 	Score+=1;
 }
 
-public void drawScoreBoard(int Wave){
+public void drawScoreBoard(int Score){
 	changeColor(white);
-	drawText(900, 20, "Wave:", "Arial", 20);
-	drawText(960, 20, Integer.toString(Wave), "Arial", 20);
+	drawText(900, 20, "Score:", "Arial", 20);
+	drawText(960, 20, Integer.toString(Score), "Arial", 20);
 }
 // Draw the tank body
 public void drawTank(Tank tank) {
@@ -199,7 +223,7 @@ public void drawBullet(Tank object) {
 	restoreLastTransform();
 }
 // Update bullet
-// TODO change the keyword 'laser' to 'bullet'
+// TODO
 public void updateLaser(double dt, Tank object){
 	Bullet laser = object.getBullet();
 	// Update the laser
@@ -217,6 +241,9 @@ public void updateLaser(double dt, Tank object){
 	for (Tank enemy: enemyTankList){
 		if (distance (enemy.getPositionX(),enemy.getPositionY(),laser.getPositionX(),laser.getPositionY()) < enemy.getRadius()){
 			updateScore();
+			explosion = true;
+			enemy.setHealth(0);
+
 			// Add explosion animation
 		}
 	}
@@ -276,7 +303,6 @@ double randY;
 boolean tooClose;
 
 //Create tanks and set properties
-//TODO: code for selecting type of tank(what sprite to use, health etc)
 private void initEnemyTankList() {
 	enemyTankList = new Tank[numberOfEnemyTanks];
 	enemyTankImageList = new Image[numberOfEnemyTanks];
@@ -380,7 +406,7 @@ private void updateEnemyTankList(double dt) {
 private void drawEnemyTankList() {
 	for (int i = 0; i < numberOfEnemyTanks; i++) {
 
-
+		if (enemyTankList[i].getHealth()>0){
 
 		saveCurrentTransform();
 		translate(enemyTankList[i].getPositionX(),enemyTankList[i].getPositionY());
@@ -405,17 +431,20 @@ private void drawEnemyTankList() {
 //		// Restore last transform to undo the rotate and translate transforms
 //		restoreLastTransform();
 
-
+		}
 	}
 }
 
 private void drawEnemyTurretList() {
 	for (int i = 0; i < numberOfEnemyTanks; i++) {
-		saveCurrentTransform();
-		translate(enemyTankList[i].getPositionX(), enemyTankList[i].getPositionY());
-		rotate(enemyTankList[i].getTurretAngle());
-		drawImage(enemyTurretImageList[i], -32, -60.5);
-		restoreLastTransform();
+		if (enemyTankList[i].getHealth()>0){
+
+			saveCurrentTransform();
+			translate(enemyTankList[i].getPositionX(), enemyTankList[i].getPositionY());
+			rotate(enemyTankList[i].getTurretAngle());
+			drawImage(enemyTurretImageList[i], -32, -60.5);
+			restoreLastTransform();
+		}
 	}
 }
 
@@ -522,6 +551,10 @@ public void init() {
 	initEnemyTankList();
 
 }
+// Calculates the
+public int getFrame(double d, int num_frames) {
+	return (int)Math.floor(((animTime % d) / d) * num_frames);
+}
 public void detectContact(String object1, String object2){
 	// this will detect the contact between two things
 	if (object1 == "players" && object2 == "enemies"){
@@ -593,6 +626,8 @@ public void detectContact(String object1, String object2){
 //
 // Updates the display
 public void update(double dt) {
+	animTime += dt;
+	currentFrame = (currentFrame + 1) % 30;
 	// If the game is over
 	if(state == GameState.GAMEOVER) {
 		// Don't try to update anything.
@@ -642,12 +677,20 @@ public void update(double dt) {
 // This gets called any time the Operating System
 // tells the program to paint itself
 public void paintComponent() {
+
 	// Clear the background to black
 	changeBackgroundColor(black);
 	clearBackground(width(), height());
 	// If the game is not over yet
 	if(state == GameState.PLAYING) {
 		drawImage(backgroundImage, width()-1024, height()-1024);
+		if (explosion==true){
+			//TODO
+			for (int i = 0; i<frames.length;i++){
+				drawImage(frames[i], 130, 102, 22, 22);
+			}
+		}
+		explosion = false;
 
 		//Display pause info in game
 		changeColor(105,105,105);
