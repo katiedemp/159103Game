@@ -490,6 +490,7 @@ public class TankGame extends GameEngine {
 		// Initialise player
 		initPlayerTank();
 		initEnemyTankList();
+		initExplosion();
 
 	}
 
@@ -518,6 +519,7 @@ public class TankGame extends GameEngine {
 			}
 			
 			updateEnemyTankList(dt);
+			updateExplosion(dt);
 			
 			Tank tankCollision = detectCollision();
 			if (tankCollision!= null){
@@ -569,6 +571,7 @@ public class TankGame extends GameEngine {
 
 			drawEnemyTankList();
 			drawEnemyTurretList();
+			drawExplosion();
 
 		// If the game is at menu
 		} else if(state == GameState.MENU) {
