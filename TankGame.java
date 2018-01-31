@@ -22,9 +22,7 @@ public class TankGame extends GameEngine {
 	public void setGameState(GameState par1State) {
 		this.state = par1State;
 	} */
-	// Tank types
-	int tankHeightE100 = 207;
-	int tankWidthE100 = 96;
+
 	//-------------------------------------------------------
 	// Tank Objects
 	//-------------------------------------------------------
@@ -36,7 +34,7 @@ public class TankGame extends GameEngine {
 	Tank playerTwo;
 	// Tank sound effects
 	AudioClip TankMovingMusic =  loadAudio("Music\\tankDriving.wav");
-;
+
 	// Init player Function
 	public void initPlayerTank() {
 		// Load the player Tank sprite
@@ -55,7 +53,7 @@ public class TankGame extends GameEngine {
 		rotate(tank.getHullAngle());
 
 		// Draw the tank
-		drawImage(playerTankImage, -48, -103.5);
+		drawImage(playerTankImage, -(tank.getWidth()/4), -(tank.getHeight()/4),tank.getWidth()/2,tank.getHeight()/2);
 		// Restore last transform to undo the rotate and translate transforms
 		restoreLastTransform();
 	}
@@ -65,7 +63,7 @@ public class TankGame extends GameEngine {
 		translate(tank.getPositionX(), tank.getPositionY());
 		rotate(tank.getTurretAngle());
 		//rotate(playerTurretAngle+90);
-		drawImage(playerTurretImage, -48, -103.5);
+		drawImage(playerTurretImage, -(tank.getWidth()/4), -(tank.getHeight()/4),tank.getWidth()/2,tank.getHeight()/2);
 		restoreLastTransform();
 	}
 	// Update the tank body
@@ -305,15 +303,6 @@ public class TankGame extends GameEngine {
 			enemyTankList[i].setTurretAngle(rand(360));
 		}
 
-		//for (int i = 0; i < enemyTankImageList.length; i++) {
-
-		//}
-
-		//for (int i = 0; i < enemyTurretImageList.length; i++) {
-
-		//}
-	}
-
 	private void updateEnemyTankList(double dt) {
 		for (Tank tank : enemyTankList) {
 			if (tank.getHealth() > 0) {
@@ -335,7 +324,7 @@ public class TankGame extends GameEngine {
 				updateTank(dt, tank);
 				double angleToPlayer = workOutAngle(tank.getPositionX(), tank.getPositionY(), playerOne.getPositionX(), playerOne.getPositionY());
 				if(checkTargetInSight(tank, playerOne) == true) {
-					tank.setHullAngle(angleToPlayer);
+					//tank.setHullAngle(angleToPlayer);
 				}
 				if(checkTargetInFiringRange(tank, playerOne) == true) {
 					tank.setTurretAngle(angleToPlayer + 90);
@@ -350,7 +339,8 @@ public class TankGame extends GameEngine {
 			translate(enemyTankList[i].getPositionX(), enemyTankList[i].getPositionY());
 			rotate(enemyTankList[i].getHullAngle());
 			// Draw the tank
-			drawImage(enemyTankImageList[i], -enemyTankList[i].getWidth()/2, -enemyTankList[i].getHeight()/2);
+			drawImage(enemyTankImageList[i], -enemyTankList[i].getWidth()/4, -enemyTankList[i].getHeight()/4,enemyTankList[i].getWidth()/2,enemyTankList[i].getHeight()/2);
+
 			// Restore last transform to undo the rotate and translate transforms
 			restoreLastTransform();
 		}
@@ -361,20 +351,20 @@ public class TankGame extends GameEngine {
 			saveCurrentTransform();
 			translate(enemyTankList[i].getPositionX(), enemyTankList[i].getPositionY());
 			rotate(enemyTankList[i].getTurretAngle());
-			drawImage(enemyTurretImageList[i], -enemyTankList[i].getWidth()/2, -enemyTankList[i].getHeight()/2);
+			drawImage(enemyTurretImageList[i], -enemyTankList[i].getWidth()/4, -enemyTankList[i].getHeight()/4, enemyTankList[i].getWidth()/2,enemyTankList[i].getHeight()/2);
 			restoreLastTransform();
 		}
 	}
 
 	private boolean checkTargetInSight(Tank aiTank, Tank targetTank) {
-		if (distance(aiTank.getPositionX(), aiTank.getPositionY(), targetTank.getPositionX(), targetTank.getPositionY()) < 600) {
+		if (distance(aiTank.getPositionX(), aiTank.getPositionY(), targetTank.getPositionX(), targetTank.getPositionY()) < 250) {
 			return true;
 		}
 		return false;
 	}
 
 	private boolean checkTargetInFiringRange(Tank aiTank, Tank targetTank) {
-		if (distance(aiTank.getPositionX(), aiTank.getPositionY(), targetTank.getPositionX(), targetTank.getPositionY()) < 500) {
+		if (distance(aiTank.getPositionX(), aiTank.getPositionY(), targetTank.getPositionX(), targetTank.getPositionY()) < 1024) {
 			return true;
 		}
 		return false;
@@ -453,7 +443,8 @@ public class TankGame extends GameEngine {
 		// startAudioLoop(menuMusic,5);
 		// load tank driving Sound
 
-		numberOfEnemyTanks = 4;
+  	numberOfEnemyTanks = 8;
+
 
 		// Setup Game booleans
 		//gameOver = true;
