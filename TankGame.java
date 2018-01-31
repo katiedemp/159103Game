@@ -106,6 +106,27 @@ public class TankGame extends GameEngine {
 		//This makes the turret track exactly to the cursor
 		playerOne.setTurretAngle(targetAngle + 90);
 	}
+
+	//Player 2 turret
+	public void updateTurretP2(double dt, Tank playerTwo) {
+		double targetAngle = workOutAngle(playerTwo.getPositionX(), playerTwo.getPositionY(), playerTwo.getPositionX(), playerTwo.getPositionY());
+		
+		// If the user is holding down the left arrow key
+		if(playerTwo.getTurretMovingLeft() == true) {
+			playerTwo.setTurretAngle(playerTwo.getTurretAngle() - playerTwo.getTurretSpeed() * dt);
+			if(playerTwo.getTurretAngle() < -360) {
+				playerTwo.setTurretAngle(0);
+			}
+		}
+		// If the user is holding down the right arrow key
+		if(playerTwo.getTurretMovingRight() == true) {
+			playerTwo.setTurretAngle(playerTwo.getTurretAngle() + playerTwo.getTurretSpeed() * dt);
+			if(playerTwo.getTurretAngle() > 360) {
+				playerTwo.setTurretAngle(0);
+			}
+		}	
+	}
+	
 	// Draw Bullet
 	// Function to draw the laser
 	public void drawLaser(Tank object) {
@@ -389,6 +410,8 @@ public class TankGame extends GameEngine {
 	Image pausedImage;
 	//Game Over screen
 	Image gameOverImage;
+	//Background
+	Image backgroundImage;
 	// Bullets
 	Image bulletImageSprite;
 	// Keep track of keys
@@ -435,13 +458,14 @@ public class TankGame extends GameEngine {
 		pausedImage = loadImage("Paused\\PausedImage.png");
 		//Load Game Over Image
 		gameOverImage = loadImage("GameOver\\GameOverImage.png");
+		//Load Background Image
+		backgroundImage = loadImage("Background\\Background.png");
 		// Load bullet Image
-
 		bulletImageSprite = loadImage("Bullets\\bullet.png");
 		//Load and play Menu Music
 		AudioClip menuMusic = loadAudio("Music\\MenuMusic.wav");
 
-		// startAudioLoop(menuMusic,5);
+		startAudioLoop(menuMusic, 1);
 		// load tank driving Sound
 
   	numberOfEnemyTanks = 8;
@@ -474,7 +498,7 @@ public class TankGame extends GameEngine {
 			updateTank(dt,playerOne);
 			updateTurret(dt,playerOne);
 			updateTank(dt,playerTwo);
-			updateTurret(dt,playerTwo);
+			updateTurretP2(dt,playerTwo);
 			updateLaser(dt,playerOne);
 			updateLaser(dt,playerTwo);
 			updateEnemyTankList(dt);
@@ -498,8 +522,10 @@ public class TankGame extends GameEngine {
 		// Clear the background to black
 		changeBackgroundColor(black);
 		clearBackground(width(), height());
+		
 		// If the game is not over yet
 		if(state == GameState.PLAYING) {
+			drawImage(backgroundImage, width()-1024, height()-1024);
 			//Display pause info in game
 			changeColor(105,105,105);
 			drawBoldText(width()-195, height()-998, "Press Esc to Pause Game", "Arial", 15);
@@ -617,7 +643,17 @@ public class TankGame extends GameEngine {
 			playerTwo.setBullet(bullet);
 			fireLaser(playerTwo);
 		}
+		//Turret
+		if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+			playerTwo.setTurretMovingLeft(true);
+			playerTwo.setTurretMovingRight(false);
 
+		}
+		if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			playerTwo.setTurretMovingRight(true);
+			playerTwo.setTurretMovingLeft(false);
+		}
+		
 		//GameState Buttons
 		// The user pressed Escape key - PAUSE
 		if(e.getKeyCode() == KeyEvent.VK_ESCAPE)  {
@@ -739,6 +775,17 @@ public class TankGame extends GameEngine {
 			playerTwo.setBullet(bullet);
 			fireLaser(playerTwo);
 		}
+		// Go left turret button released
+		if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+			playerTwo.setTurretMovingLeft(false);
+			playerTwo.setTurretMovingRight(false);
+		}
+		// Go right turret button released
+		if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			playerTwo.setTurretMovingRight(false);
+			playerTwo.setTurretMovingLeft(false);
+		}
+		
 
 		// Clear the background to black
 		changeBackgroundColor(black);
