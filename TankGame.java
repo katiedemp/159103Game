@@ -294,7 +294,7 @@ public class TankGame extends GameEngine {
 				randX = rand(1024);
 				randY = rand(1024);
 				for(int j = 0; j < i; j++) {
-					if (enemyTankList[j] != null) {
+					if (enemyTankList[j] != null && enemyTankList[i] != null) {
 						if(distance(enemyTankList[i].getPositionX(), enemyTankList[i].getPositionY(), enemyTankList[j].getPositionX(), enemyTankList[j].getPositionY()) < 100) {
 							tooClose = true;
 						} else {
@@ -446,7 +446,7 @@ public class TankGame extends GameEngine {
 	//
 	// Function to initialise the game
 	public void init() {
-		setWindowSize(1024, 1024);
+		setWindowSize(1024, 1024);		
 		// Load sprites
 		E100SpriteSheet = loadImage("Tanks\\E100.png");
 		M6SpriteSheet = loadImage("Tanks\\M6.png");
