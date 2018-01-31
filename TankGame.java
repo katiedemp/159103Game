@@ -302,7 +302,6 @@ public class TankGame extends GameEngine {
 			enemyTankList[i].setHullAngle(rand(360));
 			enemyTankList[i].setTurretAngle(rand(360));
 		}
-	}
 
 	private void updateEnemyTankList(double dt) {
 		for (Tank tank : enemyTankList) {
@@ -341,6 +340,7 @@ public class TankGame extends GameEngine {
 			rotate(enemyTankList[i].getHullAngle());
 			// Draw the tank
 			drawImage(enemyTankImageList[i], -enemyTankList[i].getWidth()/4, -enemyTankList[i].getHeight()/4,enemyTankList[i].getWidth()/2,enemyTankList[i].getHeight()/2);
+
 			// Restore last transform to undo the rotate and translate transforms
 			restoreLastTransform();
 		}
@@ -443,7 +443,8 @@ public class TankGame extends GameEngine {
 		// startAudioLoop(menuMusic,5);
 		// load tank driving Sound
 
-		numberOfEnemyTanks = 8;
+  	numberOfEnemyTanks = 8;
+
 
 		// Setup Game booleans
 		//gameOver = true;
