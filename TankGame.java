@@ -1,4 +1,5 @@
 
+// package massey;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -29,6 +30,7 @@ int tankHeightE100 = 190;
 int tankWidthE100 = 96;
 
 boolean explosion;
+int explosionX,explosionY;
 //-------------------------------------------------------
 // Tank Objects
 //-------------------------------------------------------
@@ -231,6 +233,7 @@ public void updateLaser(double dt, Tank object){
 	if(laser.getFire() == true) {
 		// Increase the velocity of the spaceship
 		// as determined by the angle
+		System.out.println("updating Laser");
 		laser.setVelocityX (laser.getVelocityX() + sin(laser.getAngle()) * 250 * dt);
 		laser.setVelocityY (laser.getVelocityY() - cos(laser.getAngle()) * 250 * dt);
 	}
@@ -241,8 +244,12 @@ public void updateLaser(double dt, Tank object){
 	for (Tank enemy: enemyTankList){
 		if (distance (enemy.getPositionX(),enemy.getPositionY(),laser.getPositionX(),laser.getPositionY()) < enemy.getRadius()){
 			updateScore();
+			laser.setPositionX(0);
+			laser.setPositionY(0);
 			explosion = true;
 			enemy.setHealth(0);
+			explosionX = (int)enemy.getPositionX();
+			explosionY = (int)enemy.getPositionY();
 
 			// Add explosion animation
 		}
@@ -687,7 +694,7 @@ public void paintComponent() {
 		if (explosion==true){
 			//TODO
 			for (int i = 0; i<frames.length;i++){
-				drawImage(frames[i], 130, 102, 22, 22);
+				drawImage(frames[i], explosionX, explosionY, 22, 22);
 			}
 		}
 		explosion = false;
