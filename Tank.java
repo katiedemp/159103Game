@@ -6,7 +6,7 @@ import java.awt.geom.AffineTransform;
 
 public class Tank
 {
-
+private String status = "Alive";
 private double radius = 80;
 // On game VALUE
 private int health = 100;
@@ -213,5 +213,4 @@ public double getRadius(){
 public void setShooting(double radius){
   this.radius = radius;
 }
-
 }

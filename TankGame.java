@@ -233,7 +233,6 @@ public void updateLaser(double dt, Tank object){
 	if(laser.getFire() == true) {
 		// Increase the velocity of the spaceship
 		// as determined by the angle
-		System.out.println("updating Laser");
 		laser.setVelocityX (laser.getVelocityX() + sin(laser.getAngle()) * 250 * dt);
 		laser.setVelocityY (laser.getVelocityY() - cos(laser.getAngle()) * 250 * dt);
 	}
