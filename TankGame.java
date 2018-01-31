@@ -24,9 +24,7 @@ public class TankGame extends GameEngine {
 	public void setGameState(GameState par1State) {
 		this.state = par1State;
 	} */
-	// Tank types
-	int tankHeightE100 = 207;
-	int tankWidthE100 = 96;
+
 	//-------------------------------------------------------
 	// Tank Objects
 	//-------------------------------------------------------
@@ -38,18 +36,24 @@ public class TankGame extends GameEngine {
 	Tank playerTwo;
 	// Tank sound effects
 	AudioClip TankMovingMusic =  loadAudio("Music\\tankDriving.wav");
+
 	AudioClip TankFire =  loadAudio("Music\\fire.wav");
 	AudioClip TankExplosion =  loadAudio("Music\\explosion.wav");
 
-;
+
+
+
+
 	// Init player Function
 	public void initPlayerTank() {
 		// Load the player Tank sprite
 
-		playerTankImage   = subImage(E100SpriteSheet,96, 0, tankWidthE100, tankHeightE100);
-		playerTurretImage = subImage(E100SpriteSheet, 0, 0, tankWidthE100, tankHeightE100);
-		playerOne = new Tank(0,0, 100, 75, 125,tankHeightE100,tankWidthE100);
-		playerTwo = new Tank(width()/2-100, height()/2, 100, 75, 125,tankHeightE100,tankWidthE100);
+
+		playerOne = new Tank(width()/2, height()/2, 100, 75, 125,"E100");
+		playerTwo = new Tank(width()/2-100, height()/2, 100, 75, 125,"E100");
+		playerTankImage   = subImage(E100SpriteSheet,playerOne.getWidth(), 0, playerOne.getWidth(), playerOne.getHeight());
+		playerTurretImage = subImage(E100SpriteSheet, 0, 0, playerOne.getWidth(), playerOne.getHeight());
+
 		// bulletImage = subImage(bulletImageSprite,0,0,16,16);
 	}
 	// Draw the tank body
@@ -60,7 +64,7 @@ public class TankGame extends GameEngine {
 		rotate(tank.getHullAngle());
 
 		// Draw the tank
-		drawImage(playerTankImage, -48, -103.5);
+		drawImage(playerTankImage, -(tank.getWidth()/4), -(tank.getHeight()/4),tank.getWidth()/2,tank.getHeight()/2);
 		// Restore last transform to undo the rotate and translate transforms
 		restoreLastTransform();
 	}
@@ -70,7 +74,7 @@ public class TankGame extends GameEngine {
 		translate(tank.getPositionX(), tank.getPositionY());
 		rotate(tank.getTurretAngle());
 		//rotate(playerTurretAngle+90);
-		drawImage(playerTurretImage, -48, -103.5);
+		drawImage(playerTurretImage, -(tank.getWidth()/4), -(tank.getHeight()/4),tank.getWidth()/2,tank.getHeight()/2);
 		restoreLastTransform();
 	}
 	// Update the tank body
@@ -113,6 +117,27 @@ public class TankGame extends GameEngine {
 		//This makes the turret track exactly to the cursor
 		playerOne.setTurretAngle(targetAngle + 90);
 	}
+
+	//Player 2 turret
+	public void updateTurretP2(double dt, Tank playerTwo) {
+		double targetAngle = workOutAngle(playerTwo.getPositionX(), playerTwo.getPositionY(), playerTwo.getPositionX(), playerTwo.getPositionY());
+		
+		// If the user is holding down the left arrow key
+		if(playerTwo.getTurretMovingLeft() == true) {
+			playerTwo.setTurretAngle(playerTwo.getTurretAngle() - playerTwo.getTurretSpeed() * dt);
+			if(playerTwo.getTurretAngle() < -360) {
+				playerTwo.setTurretAngle(0);
+			}
+		}
+		// If the user is holding down the right arrow key
+		if(playerTwo.getTurretMovingRight() == true) {
+			playerTwo.setTurretAngle(playerTwo.getTurretAngle() + playerTwo.getTurretSpeed() * dt);
+			if(playerTwo.getTurretAngle() > 360) {
+				playerTwo.setTurretAngle(0);
+			}
+		}	
+	}
+	
 	// Draw Bullet
 	// Function to draw the laser
 	public void drawLaser(Tank object) {
@@ -322,18 +347,27 @@ public class TankGame extends GameEngine {
 					}
 				}
 			}
-			enemyTankList[i] = new Tank(randX, randY, enemyTankSpeed, enemyTurnSpeed, enemyTurretSpeed, tankHeightE100, tankWidthE100);
+
+			int type = rand(3);
+			if (type <=1) {
+				enemyTankList[i] = new Tank(randX, randY, enemyTankSpeed, enemyTurnSpeed, enemyTurretSpeed, "M6");
+				enemyTankImageList[i] = subImage(M6SpriteSheet, enemyTankList[i].getWidth(), 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+				enemyTurretImageList[i] = subImage(M6SpriteSheet, 0, 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+			}
+			if (type > 1 && type <=2) {
+				enemyTankList[i] = new Tank(randX, randY, enemyTankSpeed, enemyTurnSpeed, enemyTurretSpeed, "KV2");
+				enemyTankImageList[i] = subImage(KV2SpriteSheet, enemyTankList[i].getWidth(), 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+				enemyTurretImageList[i] = subImage(KV2SpriteSheet, 0, 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+			}
+			if (type > 2 && type <=3) {
+				enemyTankList[i] = new Tank(randX, randY, enemyTankSpeed, enemyTurnSpeed, enemyTurretSpeed, "PZ4G");
+				enemyTankImageList[i] = subImage(PZ4GSpriteSheet, enemyTankList[i].getWidth(), 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+				enemyTurretImageList[i] = subImage(PZ4GSpriteSheet, 0, 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+			}
+
 			enemyTankList[i].setHullAngle(rand(360));
 			enemyTankList[i].setTurretAngle(rand(360));
-		}
-
-		for (int i = 0; i < enemyTankImageList.length; i++) {
-			enemyTankImageList[i] = subImage(E100SpriteSheet, 96, 0, tankWidthE100, tankHeightE100);
-		}
-
-		for (int i = 0; i < enemyTurretImageList.length; i++) {
-			enemyTurretImageList[i] = subImage(E100SpriteSheet, 0, 0, tankWidthE100, tankHeightE100);
-		}
+    }
 	}
 
 	private void updateEnemyTankList(double dt) {
@@ -357,7 +391,7 @@ public class TankGame extends GameEngine {
 				updateTank(dt, tank);
 				double angleToPlayer = workOutAngle(tank.getPositionX(), tank.getPositionY(), playerOne.getPositionX(), playerOne.getPositionY());
 				if(checkTargetInSight(tank, playerOne) == true) {
-					tank.setHullAngle(angleToPlayer);
+					//tank.setHullAngle(angleToPlayer);
 				}
 				if(checkTargetInFiringRange(tank, playerOne) == true) {
 					tank.setTurretAngle(angleToPlayer + 90);
@@ -372,7 +406,8 @@ public class TankGame extends GameEngine {
 			translate(enemyTankList[i].getPositionX(), enemyTankList[i].getPositionY());
 			rotate(enemyTankList[i].getHullAngle());
 			// Draw the tank
-			drawImage(enemyTankImageList[i], -48, -103.5);
+			drawImage(enemyTankImageList[i], -enemyTankList[i].getWidth()/4, -enemyTankList[i].getHeight()/4,enemyTankList[i].getWidth()/2,enemyTankList[i].getHeight()/2);
+
 			// Restore last transform to undo the rotate and translate transforms
 			restoreLastTransform();
 		}
@@ -383,20 +418,20 @@ public class TankGame extends GameEngine {
 			saveCurrentTransform();
 			translate(enemyTankList[i].getPositionX(), enemyTankList[i].getPositionY());
 			rotate(enemyTankList[i].getTurretAngle());
-			drawImage(enemyTurretImageList[i], -48, -103.5);
+			drawImage(enemyTurretImageList[i], -enemyTankList[i].getWidth()/4, -enemyTankList[i].getHeight()/4, enemyTankList[i].getWidth()/2,enemyTankList[i].getHeight()/2);
 			restoreLastTransform();
 		}
 	}
 
 	private boolean checkTargetInSight(Tank aiTank, Tank targetTank) {
-		if (distance(aiTank.getPositionX(), aiTank.getPositionY(), targetTank.getPositionX(), targetTank.getPositionY()) < 600) {
+		if (distance(aiTank.getPositionX(), aiTank.getPositionY(), targetTank.getPositionX(), targetTank.getPositionY()) < 250) {
 			return true;
 		}
 		return false;
 	}
 
 	private boolean checkTargetInFiringRange(Tank aiTank, Tank targetTank) {
-		if (distance(aiTank.getPositionX(), aiTank.getPositionY(), targetTank.getPositionX(), targetTank.getPositionY()) < 500) {
+		if (distance(aiTank.getPositionX(), aiTank.getPositionY(), targetTank.getPositionX(), targetTank.getPositionY()) < 1024) {
 			return true;
 		}
 		return false;
@@ -407,19 +442,21 @@ public class TankGame extends GameEngine {
 	//-------------------------------------------------------
 	// Spritesheet
 	Image E100SpriteSheet;
-	Image kv2Spritesheet;
-	Image m6Spritesheet;
-	Image pz4Spritesheet;
-	Image pz4gSpritesheet;
-	Image t34Spritesheet;
-	Image tiger2Spritesheet;
-	Image vk3601hSpritesheet;
+	Image KV2SpriteSheet;
+	Image M6SpriteSheet;
+	Image pz4SpriteSheet;
+	Image PZ4GSpriteSheet;
+	Image t34SpriteSheet;
+	Image tiger2SpriteSheet;
+	Image vk3601hSpriteSheet;
 	//Menu Screen
 	Image menuImage;
 	//Paused Screen
 	Image pausedImage;
 	//Game Over screen
 	Image gameOverImage;
+	//Background
+	Image backgroundImage;
 	// Bullets
 	Image bulletImageSprite;
 	// Keep track of keys
@@ -457,22 +494,27 @@ public class TankGame extends GameEngine {
 		setWindowSize(1024, 1024);
 		// Load sprites
 		E100SpriteSheet = loadImage("Tanks\\E100.png");
+		M6SpriteSheet = loadImage("Tanks\\M6.png");
+		KV2SpriteSheet = loadImage("Tanks\\KV2.png");
+		PZ4GSpriteSheet = loadImage("Tanks\\PZ4G.png");
 		//Load Menu Image
 		menuImage = loadImage("Menu\\TankGame.png");
 		//Load Paused Image
 		pausedImage = loadImage("Paused\\PausedImage.png");
 		//Load Game Over Image
 		gameOverImage = loadImage("GameOver\\GameOverImage.png");
+		//Load Background Image
+		backgroundImage = loadImage("Background\\Background.png");
 		// Load bullet Image
-
 		bulletImageSprite = loadImage("Bullets\\bullet.png");
 		//Load and play Menu Music
 		AudioClip menuMusic = loadAudio("Music\\MenuMusic.wav");
 
-		// startAudioLoop(menuMusic,5);
+		startAudioLoop(menuMusic, 1);
 		// load tank driving Sound
 
-		numberOfEnemyTanks = 3;
+  	numberOfEnemyTanks = 8;
+
 
 		// Setup Game booleans
 		//gameOver = true;
@@ -501,7 +543,7 @@ public class TankGame extends GameEngine {
 			updateTank(dt,playerOne);
 			updateTurret(dt,playerOne);
 			updateTank(dt,playerTwo);
-			updateTurret(dt,playerTwo);
+			updateTurretP2(dt,playerTwo);
 			updateLaser(dt,playerOne);
 			updateLaser(dt,playerTwo);
 			updateEnemyTankList(dt);
@@ -525,8 +567,10 @@ public class TankGame extends GameEngine {
 		// Clear the background to black
 		changeBackgroundColor(black);
 		clearBackground(width(), height());
+		
 		// If the game is not over yet
 		if(state == GameState.PLAYING) {
+			drawImage(backgroundImage, width()-1024, height()-1024);
 			//Display pause info in game
 			changeColor(105,105,105);
 			drawBoldText(width()-195, height()-998, "Press Esc to Pause Game", "Arial", 15);
@@ -647,7 +691,17 @@ public class TankGame extends GameEngine {
 			playerTwo.setBullet(bullet);
 			fireLaser(playerTwo);
 		}
+		//Turret
+		if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+			playerTwo.setTurretMovingLeft(true);
+			playerTwo.setTurretMovingRight(false);
 
+		}
+		if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			playerTwo.setTurretMovingRight(true);
+			playerTwo.setTurretMovingLeft(false);
+		}
+		
 		//GameState Buttons
 		// The user pressed Escape key - PAUSE
 		if(e.getKeyCode() == KeyEvent.VK_ESCAPE)  {
@@ -769,6 +823,17 @@ public class TankGame extends GameEngine {
 			playerTwo.setBullet(bullet);
 			fireLaser(playerTwo);
 		}
+		// Go left turret button released
+		if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+			playerTwo.setTurretMovingLeft(false);
+			playerTwo.setTurretMovingRight(false);
+		}
+		// Go right turret button released
+		if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			playerTwo.setTurretMovingRight(false);
+			playerTwo.setTurretMovingLeft(false);
+		}
+		
 
 		// Clear the background to black
 		changeBackgroundColor(black);
