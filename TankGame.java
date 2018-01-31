@@ -302,6 +302,7 @@ public class TankGame extends GameEngine {
 			enemyTankList[i].setHullAngle(rand(360));
 			enemyTankList[i].setTurretAngle(rand(360));
 		}
+	}
 
 	private void updateEnemyTankList(double dt) {
 		for (Tank tank : enemyTankList) {
