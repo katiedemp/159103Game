@@ -419,6 +419,8 @@ public class TankGame extends GameEngine {
 	Image pausedImage;
 	//Game Over screen
 	Image gameOverImage;
+	//Background
+	Image backgroundImage;
 	// Bullets
 	Image bulletImageSprite;
 	// Keep track of keys
@@ -465,8 +467,9 @@ public class TankGame extends GameEngine {
 		pausedImage = loadImage("Paused\\PausedImage.png");
 		//Load Game Over Image
 		gameOverImage = loadImage("GameOver\\GameOverImage.png");
+		//Load Background Image
+		backgroundImage = loadImage("Background\\Background.png");
 		// Load bullet Image
-
 		bulletImageSprite = loadImage("Bullets\\bullet.png");
 		//Load and play Menu Music
 		AudioClip menuMusic = loadAudio("Music\\MenuMusic.wav");
@@ -527,8 +530,10 @@ public class TankGame extends GameEngine {
 		// Clear the background to black
 		changeBackgroundColor(black);
 		clearBackground(width(), height());
+		
 		// If the game is not over yet
 		if(state == GameState.PLAYING) {
+			drawImage(backgroundImage, width()-1024, height()-1024);
 			//Display pause info in game
 			changeColor(105,105,105);
 			drawBoldText(width()-195, height()-998, "Press Esc to Pause Game", "Arial", 15);
