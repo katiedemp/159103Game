@@ -135,48 +135,11 @@ public void updateTank(double dt, Tank tank) {
 	if (tank.getPositionY()+tank.getRadius()<=0){
 		tank.setPositionY(tank.getPositionY()+height);
 	}
-//	 if (tank.getPositionY()-tank.getRadius()<=limitTop){
-//		 if (tank.getForward() == true){
-//			 tank.setForward(false);
-//			 tank.setPositionY(tank.getPositionY()+1);
-//		 }
-//		 else if (tank.getReverse()==true){
-//			 tank.setReverse(false);
-//			 tank.setPositionY(tank.getPositionY()+1);
-//		 }
-//	 }
+
 	// Collision detection with the bottom
 	if (tank.getPositionY()+tank.getRadius()>=height){
 		tank.setPositionY(tank.getPositionY()-height);
 	}
-//	 if (tank.getPositionY()+tank.getRadius()>=limitBottom){
-//		 if (tank.getForward() == true){
-//			 tank.setForward(false);
-//			 tank.setPositionY(tank.getPositionY()-1);
-//		 }
-//		 else if (tank.getReverse()==true){
-//			 tank.setReverse(false);
-//			 tank.setPositionY(tank.getPositionY()-1);
-//		 }
-//	 }
-//	 for (int j = 0; j > enemyTankList.length;j++){
-//		 Tank enemy = enemyTankList[j];
-//		 if(distance(enemy.getPositionX(), enemy.getPositionY(), tank.getPositionX(), tank.getPositionY()) < tank.getRadius()) {
-//
-//			 if (tank.getForward() == true){
-//				 tank.setForward(false);
-////				 enemy.setReverse(true);
-//
-////				 enemy.setPositionY(tank.getPositionY()-1);
-//			 }
-//			 else if (tank.getReverse()==true){
-//				 tank.setReverse(false);
-////				 enemy.setForward(true);
-////				 enemy.setPositionY(tank.getPositionY()-1);
-//			 }
-//		 }
-//	 }
-
 	if (tank.getHealth()<0){
 		// Make tank explode
 		System.out.println("Tank Exploded");
@@ -241,10 +204,14 @@ public void updateLaser(double dt, Tank object){
 	object.setBullet(laser);
 
 	for (Tank enemy: enemyTankList){
+		if ((enemy.getHealth()>0)&& laser.getFire()){
 		if (distance (enemy.getPositionX(),enemy.getPositionY(),laser.getPositionX(),laser.getPositionY()) < enemy.getRadius()){
 			updateScore();
 			laser.setPositionX(0);
 			laser.setPositionY(0);
+			laser.setVelocityX(0);
+			laser.setVelocityY(0);
+			laser.setFire(false);
 			explosion = true;
 			enemy.setHealth(0);
 			explosionX = (int)enemy.getPositionX();
@@ -252,6 +219,7 @@ public void updateLaser(double dt, Tank object){
 
 			// Add explosion animation
 		}
+	}
 	}
 }
 // Used in the turret
@@ -406,6 +374,7 @@ private void updateEnemyTankList(double dt) {
 //				}
 				}
 		}
+
 	}
 }
 
@@ -421,22 +390,6 @@ private void drawEnemyTankList() {
 		drawImage(enemyTankImageList[i], -45, -60.5);
 		// Restore last transform to undo the rotate and translate transforms
 		restoreLastTransform();
-//		Bullet bullet = tank.getBullet();
-//		// Draw the laser
-//
-//		// Save the current transform
-//		saveCurrentTransform();
-//
-//		translate(bullet.getPositionX()-8, bullet.getPositionY());
-//
-//		// Rotate the drawing context around the angle of the asteroid
-//		rotate(bullet.getAngle());
-//
-//		// Draw the actual laser
-//		drawImage(bulletImageSprite,-7,-10);
-//		// Restore last transform to undo the rotate and translate transforms
-//		restoreLastTransform();
-
 		}
 	}
 }
@@ -568,6 +521,7 @@ public void detectContact(String object1, String object2){
 		// it will take the enemies and will compare it with the first player
 		for (int j = 0; j < enemyTankList.length;j++){
 		Tank enemy = enemyTankList[j];
+		if (enemy.getHealth()>0){
 		if(distance(enemy.getPositionX(), enemy.getPositionY(), playerOne.getPositionX(), playerOne.getPositionY()) < playerOne.getRadius()*1.2) {
 			System.out.println("Player is touching an enemy");
 			enemy.setHullAngle(workOutAngle(enemy.getPositionX(), enemy.getPositionY(), 512, 512) + 180);
@@ -584,6 +538,7 @@ public void detectContact(String object1, String object2){
  //			 enemy.setPositionY(tank.getPositionY()-1);
 				}
 			}
+		}
 		}
 
 	}
@@ -615,17 +570,22 @@ public void detectContact(String object1, String object2){
 		// it will take the enemies and will compare it with the first player
 		for (int j = 0; j < enemyTankList.length;j++){
 			Tank enemy1 = enemyTankList[j];
+			if (enemy1.getHealth()>0){
 
 			for (int jx = 0; jx < enemyTankList.length;jx++){
+
 				if (j!=jx){
 					Tank enemy2 = enemyTankList[jx];
+					if (enemy2.getHealth()>0){
 					if(distance(enemy1.getPositionX(), enemy1.getPositionY(), enemy2.getPositionX(), enemy2.getPositionY()) < enemy1.getRadius()*1.2) {
 						enemy1.setHullAngle(workOutAngle(enemy1.getPositionX(), enemy1.getPositionY(), 512, 512) + 180);
 						enemy2.setHullAngle(workOutAngle(enemy2.getPositionX(), enemy2.getPositionY(), 512, 512) + 90);
 
 					}
 				}
+				}
 			}
+		}
 		}
 	}
 }
