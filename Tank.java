@@ -59,6 +59,18 @@ public class Tank
 	if (tankType == "PZ4G") {
 		this.height = 253;
     	this.width = 129;
+  }
+  if (tankType == "PZ4") {
+		this.height = 241;
+    	this.width = 123;
+  }
+  if (tankType == "T34") {
+		this.height = 178;
+    	this.width = 90;
+  }
+  if (tankType == "VK3601h") {
+		this.height = 243;
+    	this.width = 127;
 	}
 
 
