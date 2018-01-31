@@ -40,10 +40,11 @@ public class TankGame extends GameEngine {
 	// Init player Function
 	public void initPlayerTank() {
 		// Load the player Tank sprite
-		playerTankImage   = subImage(E100SpriteSheet,96, 0, tankWidthE100, tankHeightE100);
-		playerTurretImage = subImage(E100SpriteSheet, 0, 0, tankWidthE100, tankHeightE100);
-		playerOne = new Tank(width()/2, height()/2, 100, 75, 125,tankHeightE100,tankWidthE100);
-		playerTwo = new Tank(width()/2-100, height()/2, 100, 75, 125,tankHeightE100,tankWidthE100);
+
+		playerOne = new Tank(width()/2, height()/2, 100, 75, 125,"E100");
+		playerTwo = new Tank(width()/2-100, height()/2, 100, 75, 125,"E100");
+		playerTankImage   = subImage(E100SpriteSheet,playerOne.getWidth(), 0, playerOne.getWidth(), playerOne.getHeight());
+		playerTurretImage = subImage(E100SpriteSheet, 0, 0, playerOne.getWidth(), playerOne.getHeight());
 		// bulletImage = subImage(bulletImageSprite,0,0,16,16);
 	}
 	// Draw the tank body
@@ -304,18 +305,34 @@ public class TankGame extends GameEngine {
 					}
 				}
 			}
-			enemyTankList[i] = new Tank(randX, randY, enemyTankSpeed, enemyTurnSpeed, enemyTurretSpeed, tankHeightE100, tankWidthE100);	
+			int type = rand(3);
+			if (type <=1) {
+				enemyTankList[i] = new Tank(randX, randY, enemyTankSpeed, enemyTurnSpeed, enemyTurretSpeed, "M6");
+				enemyTankImageList[i] = subImage(M6SpriteSheet, enemyTankList[i].getWidth(), 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+				enemyTurretImageList[i] = subImage(M6SpriteSheet, 0, 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+			}
+			if (type > 1 && type <=2) {
+				enemyTankList[i] = new Tank(randX, randY, enemyTankSpeed, enemyTurnSpeed, enemyTurretSpeed, "KV2");
+				enemyTankImageList[i] = subImage(KV2SpriteSheet, enemyTankList[i].getWidth(), 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+				enemyTurretImageList[i] = subImage(KV2SpriteSheet, 0, 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+			}
+			if (type > 2 && type <=3) {
+				enemyTankList[i] = new Tank(randX, randY, enemyTankSpeed, enemyTurnSpeed, enemyTurretSpeed, "PZ4G");
+				enemyTankImageList[i] = subImage(PZ4GSpriteSheet, enemyTankList[i].getWidth(), 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+				enemyTurretImageList[i] = subImage(PZ4GSpriteSheet, 0, 0, enemyTankList[i].getWidth(), enemyTankList[i].getHeight());
+			}
+
 			enemyTankList[i].setHullAngle(rand(360));
 			enemyTankList[i].setTurretAngle(rand(360));
 		}
 
-		for (int i = 0; i < enemyTankImageList.length; i++) {
-			enemyTankImageList[i] = subImage(E100SpriteSheet, 96, 0, tankWidthE100, tankHeightE100);	
-		}
+		//for (int i = 0; i < enemyTankImageList.length; i++) {
 
-		for (int i = 0; i < enemyTurretImageList.length; i++) {
-			enemyTurretImageList[i] = subImage(E100SpriteSheet, 0, 0, tankWidthE100, tankHeightE100);			
-		}	
+		//}
+
+		//for (int i = 0; i < enemyTurretImageList.length; i++) {
+
+		//}
 	}
 
 	private void updateEnemyTankList(double dt) {
@@ -354,7 +371,7 @@ public class TankGame extends GameEngine {
 			translate(enemyTankList[i].getPositionX(), enemyTankList[i].getPositionY());
 			rotate(enemyTankList[i].getHullAngle());
 			// Draw the tank
-			drawImage(enemyTankImageList[i], -48, -103.5);
+			drawImage(enemyTankImageList[i], -enemyTankList[i].getWidth()/2, -enemyTankList[i].getHeight()/2);
 			// Restore last transform to undo the rotate and translate transforms
 			restoreLastTransform();
 		}
@@ -365,7 +382,7 @@ public class TankGame extends GameEngine {
 			saveCurrentTransform();
 			translate(enemyTankList[i].getPositionX(), enemyTankList[i].getPositionY());
 			rotate(enemyTankList[i].getTurretAngle());
-			drawImage(enemyTurretImageList[i], -48, -103.5);
+			drawImage(enemyTurretImageList[i], -enemyTankList[i].getWidth()/2, -enemyTankList[i].getHeight()/2);
 			restoreLastTransform();
 		}
 	}
@@ -389,13 +406,13 @@ public class TankGame extends GameEngine {
 	//-------------------------------------------------------
 	// Spritesheet
 	Image E100SpriteSheet;
-	Image kv2Spritesheet;
-	Image m6Spritesheet;
-	Image pz4Spritesheet;
-	Image pz4gSpritesheet;
-	Image t34Spritesheet;
-	Image tiger2Spritesheet;
-	Image vk3601hSpritesheet;
+	Image KV2SpriteSheet;
+	Image M6SpriteSheet;
+	Image pz4SpriteSheet;
+	Image PZ4GSpriteSheet;
+	Image t34SpriteSheet;
+	Image tiger2SpriteSheet;
+	Image vk3601hSpriteSheet;
 	//Menu Screen
 	Image menuImage;
 	//Paused Screen
@@ -439,6 +456,9 @@ public class TankGame extends GameEngine {
 		setWindowSize(1024, 1024);
 		// Load sprites
 		E100SpriteSheet = loadImage("Tanks\\E100.png");
+		M6SpriteSheet = loadImage("Tanks\\M6.png");
+		KV2SpriteSheet = loadImage("Tanks\\KV2.png");
+		PZ4GSpriteSheet = loadImage("Tanks\\PZ4G.png");
 		//Load Menu Image
 		menuImage = loadImage("Menu\\TankGame.png");
 		//Load Paused Image
@@ -454,7 +474,7 @@ public class TankGame extends GameEngine {
 		startAudioLoop(menuMusic, 1);
 		// load tank driving Sound
 
-		numberOfEnemyTanks = 3;
+		numberOfEnemyTanks = 4;
 
 		// Setup Game booleans
 		//gameOver = true;
@@ -680,7 +700,7 @@ public class TankGame extends GameEngine {
 	}
 	// Called whenever a key is released
 	public void keyReleased(KeyEvent e) {
-		
+
 		if (playerOne.getMovement() == true){
 			// start audioClip
 			TankStopSound(playerOne);

@@ -28,12 +28,11 @@ public class Tank
   private double turretSpeed;
   private double turnSpeed;
 
-  private boolean patrolling;
-  private boolean chasing;
+  private String tankType;
 
   private int height;
   private int width;
-  public Tank(double positionX, double positionY, double velocity, double turnSpeed, double turretSpeed,int height, int width){
+  public Tank(double positionX, double positionY, double velocity, double turnSpeed, double turretSpeed, String tankType){
     this.positionX = positionX;
     this.positionY = positionY;
     this.velocityX = velocity;
@@ -44,8 +43,25 @@ public class Tank
     this.turnSpeed = turnSpeed;
     this.turretMovingLeft = false;
     this.turretMovingRight = false;
-    this.height = height;
-    this.width = width;
+    this.tankType = tankType;
+    if (tankType == "E100") {
+		this.height = 207;
+    	this.width = 96;
+	}
+	if (tankType == "KV2") {
+		this.height = 254;
+    	this.width = 132;
+	}
+	if (tankType == "M6") {
+		this.height = 270;
+    	this.width = 109;
+	}
+	if (tankType == "PZ4G") {
+		this.height = 253;
+    	this.width = 129;
+	}
+
+
   }
 
   public void turnRight(double dt) {
