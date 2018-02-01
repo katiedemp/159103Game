@@ -90,9 +90,9 @@ public void drawHealthBar(Tank tank){
 }
 
 // Score Board
-int Score = 0;
+int score = 0;
 public void updateScore(){
-	Score+=1;
+	score+=1;
 }
 
 public void drawScoreBoard(int Score){
@@ -485,7 +485,7 @@ int mouseY;
 private void TankMoveSound(Tank object){
 	if (object.getMovement() == false){
 		// start audioClip
-		startAudioLoop(TankMovingMusic,5);
+		// startAudioLoop(TankMovingMusic,5);
 		object.setMovement(true);
 	}
 }
@@ -522,10 +522,10 @@ public void init() {
 	//Load and play Menu Music
 	AudioClip menuMusic = loadAudio("Music\\MenuMusic.wav");
 
-	startAudioLoop(menuMusic,1);
+	// startAudioLoop(menuMusic,1);
 	// load tank driving Sound
 
-	numberOfEnemyTanks = 7;
+	numberOfEnemyTanks = 5;
 
 	// Setup Game booleans
 	//gameOver = true;
@@ -656,10 +656,14 @@ public void update(double dt) {
 	if (state == GameState.MENU) {
 		initPlayerTank();
 	}
+
 }
 // This gets called any time the Operating System
 // tells the program to paint itself
 public void paintComponent() {
+	if (score == 5){
+		state = GameState.GAMEOVER;
+	}
 
 	// Clear the background to black
 	changeBackgroundColor(black);
@@ -699,7 +703,7 @@ public void paintComponent() {
 
 		drawEnemyTankList();
 		drawEnemyTurretList();
-		drawScoreBoard(Score);
+		drawScoreBoard(score);
 
 	//
 		drawHealthBar(playerOne);
