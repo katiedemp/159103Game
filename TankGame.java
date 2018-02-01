@@ -74,6 +74,7 @@ public void initPlayerTank() {
 	// Load the player Tank sprite
 
 	playerTankImage   = subImage(E100SpriteSheet,99, 91, 90, 110);
+
 	playerTurretImage = subImage(E100SpriteSheet, 11, 24, 67, 127);
 	playerOne = new Tank(200,300, 100, 75, 125,94,162);
 	playerTwo = new Tank(width()/2-100, height()/2, 100, 75, 125,tankHeightE100,tankWidthE100);
@@ -432,6 +433,7 @@ private boolean checkTargetInFiringRange(Tank aiTank, Tank targetTank) {
 //-------------------------------------------------------
 // Spritesheet
 Image E100SpriteSheet;
+Image T34;
 Image kv2Spritesheet;
 Image m6Spritesheet;
 Image pz4Spritesheet;
@@ -483,6 +485,8 @@ public void init() {
 	setWindowSize(width, height);
 	// Load sprites
 	E100SpriteSheet = loadImage("Tanks\\E100b.png");
+
+	T34 = loadImage("Tanks\\T34.png");
 	//Load Menu Image
 	menuImage = loadImage("Menu\\TankGame.png");
 	//Load Paused Image
@@ -501,7 +505,7 @@ public void init() {
 	// startAudioLoop(menuMusic,5);
 	// load tank driving Sound
 
-	numberOfEnemyTanks = 3;
+	numberOfEnemyTanks = 7;
 
 	// Setup Game booleans
 	//gameOver = true;
