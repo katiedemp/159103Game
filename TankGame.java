@@ -174,6 +174,26 @@ public void updateTurret(double dt, Tank playerOne) {
 	//This makes the turret track exactly to the cursor
 	playerOne.setTurretAngle(targetAngle + 90);
 }
+//Player 2 turret
+    public void updateTurretP2(double dt, Tank playerTwo) {
+        double targetAngle = workOutAngle(playerTwo.getPositionX(), playerTwo.getPositionY(), playerTwo.getPositionX(), playerTwo.getPositionY());
+
+        // If the user is holding down the left arrow key
+        if(playerTwo.getTurretMovingLeft() == true) {
+            playerTwo.setTurretAngle(playerTwo.getTurretAngle() - playerTwo.getTurretSpeed() * dt);
+            if(playerTwo.getTurretAngle() < -360) {
+                playerTwo.setTurretAngle(0);
+            }
+        }
+        // If the user is holding down the right arrow key
+        if(playerTwo.getTurretMovingRight() == true) {
+            playerTwo.setTurretAngle(playerTwo.getTurretAngle() + playerTwo.getTurretSpeed() * dt);
+            if(playerTwo.getTurretAngle() > 360) {
+                playerTwo.setTurretAngle(0);
+            }
+        }
+    }
+
 
 // Function to draw the laser
 public void drawBullet(Tank object) {
@@ -502,7 +522,7 @@ public void init() {
 	//Load and play Menu Music
 	AudioClip menuMusic = loadAudio("Music\\MenuMusic.wav");
 
-	// startAudioLoop(menuMusic,5);
+	startAudioLoop(menuMusic,1);
 	// load tank driving Sound
 
 	numberOfEnemyTanks = 7;
@@ -613,23 +633,10 @@ public void update(double dt) {
 
 		// Update the players
 		updateTank(dt, playerOne);
-//		 if ( playerOneResponse != null){
-//			 System.out.println("Player one tanks says that it has touched something at the " + playerOneResponse);
-////			 playerOne.setVelocityX(playerOne.getVelocityX()*-1);
-////			 playerOne.setVelocityY(playerOne.getVelocityY()*-1);
-//		 }
-		// updateTank(dt,playerOne);
+
 		updateTurret(dt,playerOne);
 		updateTank(dt, playerTwo);
-
-//		 if (playerTwoResponse !=null){
-////			 playerTwo.setVelocityX(playerTwo.getVelocityX()*-1);
-////			 playerTwo.setVelocityY(playerTwo.getVelocityY()*-1);
-//			 System.out.println("Player two tanks says that it has touched something at the " + playerTwoResponse);
-//
-//		 }
-		// updateTank(dt,playerTwo);
-		updateTurret(dt,playerTwo);
+		updateTurretP2(dt,playerTwo);
 		updateLaser(dt,playerOne);
 		updateLaser(dt,playerTwo);
 		updateEnemyTankList(dt);
@@ -793,6 +800,17 @@ public void keyPressed(KeyEvent e) {
 		playerTwo.setBullet(bullet);
 		fireLaser(playerTwo);
 	}
+	//Turret
+    if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+        playerTwo.setTurretMovingLeft(true);
+        playerTwo.setTurretMovingRight(false);
+
+    }
+    if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        playerTwo.setTurretMovingRight(true);
+        playerTwo.setTurretMovingLeft(false);
+    }
+
 
 	//GameState Buttons
 	// The user pressed Escape key - PAUSE
@@ -915,7 +933,16 @@ public void keyReleased(KeyEvent e) {
 		playerTwo.setBullet(bullet);
 		fireLaser(playerTwo);
 	}
-
+	// Go left turret button released
+  if(e.getKeyCode() == KeyEvent.VK_LEFT) {
+      playerTwo.setTurretMovingLeft(false);
+      playerTwo.setTurretMovingRight(false);
+  }
+  // Go right turret button released
+  if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+      playerTwo.setTurretMovingRight(false);
+      playerTwo.setTurretMovingLeft(false);
+  }
 	// Clear the background to black
 	changeBackgroundColor(black);
 	clearBackground(width(), height());
