@@ -47,30 +47,30 @@ AudioClip TankExplosion =  loadAudio("Music\\explosion.wav");
 
 // Explosion animation
 
-Image explosionSheet;
-Image[] frames;
-int currentFrame;
-double animTime;
+// Image explosionSheet;
+// Image[] frames;
+// int currentFrame;
+// double animTime;
 
 // Tank[] playerTankList;
 
 ;
 // Init player Function
 public void initPlayerTank() {
-	explosionSheet = loadImage("Bullets\\explosion.png");
-	frames = new Image[100];
-
-	// Load Images
-	for(int iy = 0; iy < 7; iy++) {
-		for(int ix = 0; ix < 3; ix++) {
-//			frames[iy*6 + ix] = subImage(explosionSheet, ix*230, iy*296, 234, 181);
-			frames[iy*6 + ix] = subImage(explosionSheet, ix*22, iy*28, 22, 28);
-
-		}
-	}
+// 	explosionSheet = loadImage("Bullets\\explosion.png");
+// 	frames = new Image[100];
+//
+// 	// Load Images
+// 	for(int iy = 0; iy < 7; iy++) {
+// 		for(int ix = 0; ix < 3; ix++) {
+// //			frames[iy*6 + ix] = subImage(explosionSheet, ix*230, iy*296, 234, 181);
+// 			frames[iy*6 + ix] = subImage(explosionSheet, ix*22, iy*28, 22, 28);
+//
+// 		}
+// 	}
 
 	// Start Animation Time
-	animTime = 0;
+	// animTime = 0;
 	// Load the player Tank sprite
 
 	playerTankImage   = subImage(E100SpriteSheet,99, 91, 90, 110);
@@ -101,6 +101,7 @@ public void drawScoreBoard(int Score){
 }
 // Draw the tank body
 public void drawTank(Tank tank) {
+	if (tank.getHealth()>0){
 	// Save the current transform
 	saveCurrentTransform();
 	translate(tank.getPositionX(), tank.getPositionY());
@@ -111,14 +112,17 @@ public void drawTank(Tank tank) {
 	// Restore last transform to undo the rotate and translate transforms
 	restoreLastTransform();
 }
+}
 // Draw the tank turret
 public void drawTurret(Tank tank) {
+	if (tank.getHealth()>0){
 	saveCurrentTransform();
 	translate(tank.getPositionX(), tank.getPositionY());
 	rotate(tank.getTurretAngle());
 	//rotate(playerTurretAngle+90);
 	drawImage(playerTurretImage, -32, -60.5);
 	restoreLastTransform();
+}
 }
 // Update the tank body
 // if updateTank is false it means that it crashed
@@ -207,16 +211,18 @@ public void updateLaser(double dt, Tank object){
 		if ((enemy.getHealth()>0)&& laser.getFire()){
 		if (distance (enemy.getPositionX(),enemy.getPositionY(),laser.getPositionX(),laser.getPositionY()) < enemy.getRadius()){
 			updateScore();
+			explosion = true;
+
+			explosionX = (int)enemy.getPositionX();
+			explosionY = (int)enemy.getPositionY();
+
 			laser.setPositionX(0);
 			laser.setPositionY(0);
 			laser.setVelocityX(0);
 			laser.setVelocityY(0);
 			laser.setFire(false);
-			explosion = true;
-			enemy.setHealth(0);
-			explosionX = (int)enemy.getPositionX();
-			explosionY = (int)enemy.getPositionY();
 
+			enemy.setHealth(0);
 			// Add explosion animation
 		}
 	}
@@ -457,7 +463,7 @@ int mouseY;
 private void TankMoveSound(Tank object){
 	if (object.getMovement() == false){
 		// start audioClip
-		// startAudioLoop(TankMovingMusic,5);
+		startAudioLoop(TankMovingMusic,5);
 		object.setMovement(true);
 	}
 }
@@ -465,7 +471,7 @@ private void TankStopSound(Tank object){
 	if (object.getMovement() == true){
 		// start audioClip
 		object.setMovement(false);
-		// stopAudioLoop(TankMovingMusic);
+		stopAudioLoop(TankMovingMusic);
 	}
 }
 private GameState state = GameState.MENU;
@@ -511,9 +517,9 @@ public void init() {
 
 }
 // Calculates the
-public int getFrame(double d, int num_frames) {
-	return (int)Math.floor(((animTime % d) / d) * num_frames);
-}
+// public int getFrame(double d, int num_frames) {
+// 	return (int)Math.floor(((animTime % d) / d) * num_frames);
+// }
 public void detectContact(String object1, String object2){
 	// this will detect the contact between two things
 	if (object1 == "players" && object2 == "enemies"){
@@ -592,8 +598,8 @@ public void detectContact(String object1, String object2){
 //
 // Updates the display
 public void update(double dt) {
-	animTime += dt;
-	currentFrame = (currentFrame + 1) % 30;
+	// animTime += dt;
+	// currentFrame = (currentFrame + 1) % 30;
 	// If the game is over
 	if(state == GameState.GAMEOVER) {
 		// Don't try to update anything.
@@ -652,9 +658,7 @@ public void paintComponent() {
 		drawImage(backgroundImage, width()-1024, height()-1024);
 		if (explosion==true){
 			//TODO
-			for (int i = 0; i<frames.length;i++){
-				drawImage(frames[i], explosionX, explosionY, 22, 22);
-			}
+			System.out.println("BOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOM");
 		}
 		explosion = false;
 
@@ -725,22 +729,23 @@ public void keyPressed(KeyEvent e) {
 	// Go left
 	if(e.getKeyCode() == KeyEvent.VK_A) {
 		playerOne.setLeft(true);
-		// TankMoveSound(playerOne);
+		TankMoveSound(playerOne);
 	}
 	// Go right
 	if(e.getKeyCode() == KeyEvent.VK_D) {
 		playerOne.setRight(true);
-		// TankMoveSound(playerOne);
+		TankMoveSound(playerOne);
 	}
 	// Go forwards
 	if(e.getKeyCode() == KeyEvent.VK_W) {
 		playerOne.setForward(true);
+		TankMoveSound(playerOne);
 
 	}
 	// Go backwards
 	if(e.getKeyCode() == KeyEvent.VK_S) {
 		playerOne.setReverse(true);
-		// TankMoveSound(playerOne);
+		TankMoveSound(playerOne);
 
 	}
 	// The user fired
